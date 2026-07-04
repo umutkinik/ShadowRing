@@ -502,7 +502,7 @@ namespace Golgehalka.EditorTools
             stars.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             stars.rectTransform.anchoredPosition = new Vector2(0, 20);
 
-            var (b, _) = UIButton(panel, "Action", "▶", new Vector2(0, 0), new Vector2(300, 76), btnBg, "menu.play");
+            var (b, _) = UIButton(panel, "Action", "Play", new Vector2(0, 0), new Vector2(300, 76), btnBg, "menu.play");
             var brt = b.GetComponent<RectTransform>();
             brt.anchorMin = brt.anchorMax = new Vector2(0.5f, 0.5f);
             brt.pivot = new Vector2(0.5f, 0.5f);
