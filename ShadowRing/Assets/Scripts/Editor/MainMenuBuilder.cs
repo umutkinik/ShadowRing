@@ -136,20 +136,20 @@ namespace Golgehalka.EditorTools
             Color btnBg = new Color(0.08f, 0.05f, 0.04f, 0.72f);
             Color gold = new Color(0.85f, 0.66f, 0.32f);
 
-            // Tam ekran key-art arka planı (her en-boy oranını kaplar)
+            // Tam ekran key-art arka planı — basit tam-gerdirme (16:9'da birebir)
             if (keyArt)
             {
-                var bgGO = new GameObject("KeyArt",
-                    typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.AspectRatioFitter));
+                var bgGO = new GameObject("KeyArt", typeof(UnityEngine.UI.Image));
                 bgGO.transform.SetParent(t, false);
                 bgGO.transform.SetAsFirstSibling();
                 var brt = bgGO.GetComponent<RectTransform>();
-                brt.anchorMin = new Vector2(0.5f, 0.5f);
-                brt.anchorMax = new Vector2(0.5f, 0.5f);
-                bgGO.GetComponent<UnityEngine.UI.Image>().sprite = bgSprite;
-                var arf = bgGO.GetComponent<UnityEngine.UI.AspectRatioFitter>();
-                arf.aspectMode = UnityEngine.UI.AspectRatioFitter.AspectMode.EnvelopeParent;
-                arf.aspectRatio = 2752f / 1536f;
+                brt.anchorMin = Vector2.zero;
+                brt.anchorMax = Vector2.one;
+                brt.offsetMin = Vector2.zero;
+                brt.offsetMax = Vector2.zero;
+                var bgImg = bgGO.GetComponent<UnityEngine.UI.Image>();
+                bgImg.sprite = bgSprite;
+                bgImg.preserveAspect = false;
             }
 
             // Cinzel (Trajan akrabası, OFL) → TMP font asset'i — Diablo başlık ruhu
@@ -202,18 +202,18 @@ namespace Golgehalka.EditorTools
 
             // Buton sütunu (alt-orta)
             var (playB, playLbl) = PrototypeSceneBuilder.UIButton(t, "Play", "Play",
-                Vector2.zero, new Vector2(430, 92), btnBg, "menu.play");
-            Center(playB.GetComponent<RectTransform>(), new Vector2(0, 330));
+                Vector2.zero, new Vector2(430, 96), btnBg, "menu.play");
+            Center(playB.GetComponent<RectTransform>(), new Vector2(0, 268));
             playLbl.color = gold; playLbl.fontSize = 44;
 
             var (langB, langLbl) = PrototypeSceneBuilder.UIButton(t, "Lang", "EN",
-                Vector2.zero, new Vector2(300, 64), btnBg, null);
-            Center(langB.GetComponent<RectTransform>(), new Vector2(0, 218));
+                Vector2.zero, new Vector2(300, 66), btnBg, null);
+            Center(langB.GetComponent<RectTransform>(), new Vector2(0, 172));
             ctrl.langButton = langB; ctrl.langLabel = langLbl;
 
             var (credB, _) = PrototypeSceneBuilder.UIButton(t, "Credits", "Credits",
-                Vector2.zero, new Vector2(300, 64), btnBg, null);
-            Center(credB.GetComponent<RectTransform>(), new Vector2(0, 138));
+                Vector2.zero, new Vector2(300, 66), btnBg, null);
+            Center(credB.GetComponent<RectTransform>(), new Vector2(0, 92));
 
             ctrl.playButton = playB;
             ctrl.creditsButton = credB;
