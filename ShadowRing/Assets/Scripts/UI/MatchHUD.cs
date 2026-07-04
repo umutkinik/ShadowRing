@@ -138,7 +138,7 @@ namespace Golgehalka.UI
 
         private void RefreshStats()
         {
-            var L = LocalizationManager.Get;
+            System.Func<string, string> L = LocalizationManager.Get; // C# 9 uyumlu açık tip
             goldText.text = L("hud.gold") + ": " + EconomyManager.Instance.Gold;
             livesText.text = L("hud.lives") + ": " + GameManager.Instance.Lives;
             waveText.text = L("hud.wave") + ": " + waveManager.CurrentWave + "/" + waveManager.TotalWaves;
