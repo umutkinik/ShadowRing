@@ -168,8 +168,12 @@ namespace Golgehalka.UI
         /// (ZH/HI/AR tam desteği Faz 2'de Noto Sans asset'leriyle gelecek.)
         private void ApplyRuntimeFont()
         {
-            foreach (string name in new[] { "Arial", "Helvetica Neue", "Roboto" })
+            // Yalnızca sistemde GERÇEKTEN kurulu fontları dene — uyarı spam'i olmasın
+            var installed = new System.Collections.Generic.HashSet<string>(
+                Font.GetOSInstalledFontNames());
+            foreach (string name in new[] { "Arial", "Helvetica Neue", "Helvetica", "Roboto" })
             {
+                if (!installed.Contains(name)) continue;
                 try
                 {
                     Font os = Font.CreateDynamicFontFromOSFont(name, 48);

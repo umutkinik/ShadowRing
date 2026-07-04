@@ -91,17 +91,18 @@ namespace Golgehalka.Core
             var rng = new System.Random(level.levelId.GetHashCode());
 
             int placed = 0, attempts = 0;
-            while (placed < level.decorCount && attempts < level.decorCount * 12)
+            while (placed < level.decorCount && attempts < level.decorCount * 25)
             {
                 attempts++;
+                // Kenar şeritleri dahil geniş alan — yoğun yollu haritalarda da yer bulunur
                 var pos = new Vector3(
-                    (float)(rng.NextDouble() * 21f - 10.5f), 0f,
-                    (float)(rng.NextDouble() * 15f - 7.5f));
+                    (float)(rng.NextDouble() * 26f - 13f), 0f,
+                    (float)(rng.NextDouble() * 18f - 9f));
 
-                if (DistanceToPath(pos, level.waypoints) < 2.2f) continue;
+                if (DistanceToPath(pos, level.waypoints) < 1.8f) continue;
                 bool nearNode = false;
                 foreach (Vector3 n in level.nodePositions)
-                    if (Vector3.Distance(pos, new Vector3(n.x, 0, n.z)) < 2.2f) { nearNode = true; break; }
+                    if (Vector3.Distance(pos, new Vector3(n.x, 0, n.z)) < 1.9f) { nearNode = true; break; }
                 if (nearNode) continue;
 
                 var prefab = level.decorPrefabs[rng.Next(level.decorPrefabs.Length)];
