@@ -1,0 +1,42 @@
+{
+  "safakmarka": {
+    "display_name": "Şafakmarka (Kael'in kılıcı)",
+    "prompt": "Ornate fantasy longsword, gleaming silver blade with golden sunrise engravings along the fuller, regal winged crossguard, leather-wrapped grip, sunstone pommel, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 6000
+  },
+  "isikdis": {
+    "display_name": "Işıkdiş (Milo'nun hançeri)",
+    "prompt": "Small elegant fantasy dagger, leaf-shaped blade glowing pale blue, simple elvish silver hilt with vine engravings, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 4000
+  },
+  "ruzgarsarki": {
+    "display_name": "Rüzgarşarkı Yayı (Faelyn'in yayı)",
+    "prompt": "Elegant fantasy elven recurve bow, pale silver-green carved wood with swirling wind motifs, delicate string, small leaf ornaments at tips, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 5000
+  },
+  "demiryaran": {
+    "display_name": "Demiryaran Baltası (Borin'in baltası)",
+    "prompt": "Massive fantasy dwarven two-handed battle axe, broad bronze and dark iron double blade with geometric angular runes, thick oak haft with iron bands, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 6000
+  },
+  "aether_asa": {
+    "display_name": "Aether Işık Asası (Elwin'in asası)",
+    "prompt": "Fantasy wizard staff, tall gnarled pale wood shaft, top splitting into curved prongs cradling a glowing white crystal, faint rune carvings along shaft, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 5000
+  },
+  "aysilumu": {
+    "display_name": "Aysilümü Zırhı (efsanevi zırh)",
+    "prompt": "Fantasy chainmail shirt displayed on a simple wooden armor stand, shimmering silver-white metal rings with pearl-like sheen, delicate craftsmanship, single object, centered, game-ready low poly prop",
+    "target_polycount": 8000
+  },
+  "karatas": {
+    "display_name": "Karataş — Görücü Küre (meta eser)",
+    "prompt": "Dark fantasy crystal ball, obsidian-black sphere with swirling purple smoke inside, resting on ornate bronze claw pedestal, single object, centered, game-ready low poly prop, clean silhouette",
+    "target_polycount": 5000
+  },
+  "golgehalka_ring": {
+    "display_name": "Gölgehalka (hikâye eseri)",
+    "prompt": "Ornate fantasy ring, wide band of dark gunmetal with swirling engraved shadow patterns that seem to move, subtle purple inner glow from engravings, single object, centered, large scale display model, game-ready low poly prop",
+    "target_polycount": 4000
+  }
+}

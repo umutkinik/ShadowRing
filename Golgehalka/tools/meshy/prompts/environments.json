@@ -1,0 +1,32 @@
+{
+  "act1_watchtower": {
+    "display_name": "Yeşiloluk Gözetleme Kulesi (Act I)",
+    "prompt": "Stylized medieval wooden watchtower on mossy stone base, thatched roof, small banner, ivy details, fantasy village aesthetic, single building, game-ready low poly environment asset, clean silhouette",
+    "target_polycount": 10000
+  },
+  "act1_trees": {
+    "display_name": "Yeşiloluk Ağaç Kümesi (Act I)",
+    "prompt": "Stylized cluster of three oak trees on a grassy mound with mushrooms and small rocks, lush green foliage, warm fantasy forest aesthetic, single environment prop group, game-ready low poly, clean silhouette",
+    "target_polycount": 8000
+  },
+  "act2_gate": {
+    "display_name": "Karnholt Kale Kapısı (Act II)",
+    "prompt": "Massive stylized stone fortress gatehouse with twin square towers, iron portcullis, weathered grey stone blocks, torn banners, battle damage, single building, game-ready low poly environment asset, clean silhouette",
+    "target_polycount": 14000
+  },
+  "act2_wall": {
+    "display_name": "Karnholt Sur Parçası (Act II)",
+    "prompt": "Modular stylized stone castle wall segment with battlements and wooden walkway, weathered grey stone, moss in cracks, single modular piece, game-ready low poly environment asset",
+    "target_polycount": 8000
+  },
+  "act3_spire": {
+    "display_name": "Boşluk Kalesi Kulesi (Act III)",
+    "prompt": "Dark stylized obsidian fortress spire, jagged twisted black rock tower, glowing purple cracks and veins, spiked crown top, ominous fantasy evil architecture, single building, game-ready low poly environment asset, clean silhouette",
+    "target_polycount": 12000
+  },
+  "act3_rocks": {
+    "display_name": "Emberwaste Kaya Oluşumu (Act III)",
+    "prompt": "Stylized volcanic wasteland rock formation, sharp dark basalt rocks with glowing orange ember cracks, ash dunes at base, scorched dead tree, single environment prop group, game-ready low poly, clean silhouette",
+    "target_polycount": 8000
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "kael": {
+    "display_name": "Kael Fırtınataç (Kolcu-Kral)",
+    "prompt": "Stylized fantasy ranger king, rugged human warrior with dark shoulder-length hair and short beard, weathered green cloak over leather and chainmail armor, longsword at hip, noble commanding posture, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "faelyn": {
+    "display_name": "Faelyn Tezok (Elf Okçu)",
+    "prompt": "Stylized fantasy elf archer, slender graceful figure, long silver-blond hair, pointed ears, elegant green and grey leather armor, ornate recurve bow in hand, quiver on back, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "borin": {
+    "display_name": "Borin Demirsakal (Cüce Savaşçı)",
+    "prompt": "Stylized fantasy dwarf warrior, short stocky muscular build, long braided iron-grey beard, heavy ornate two-handed battle axe, stone-carved plate armor with bronze trim, sturdy boots, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "elwin": {
+    "display_name": "Elwin Gümüşasa (Gri Büyücü)",
+    "prompt": "Stylized fantasy wizard, old wise man with long grey beard and bushy eyebrows, grey hooded robe, tall wooden staff with glowing crystal tip, wide-brimmed pointed hat, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "baldric": {
+    "display_name": "Baldric Boynuzkılıç (İnsan Şampiyon)",
+    "prompt": "Stylized fantasy human champion knight, broad muscular build, red and gold surcoat over heavy plate armor, large round shield, war horn hanging from belt, arming sword, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "milo": {
+    "display_name": "Milo Yeşilayak (Yarımlık Taşıyıcı)",
+    "prompt": "Stylized fantasy halfling adventurer, small childlike proportions but adult face, curly brown hair, bare large feet, simple travel vest and cloak, small glowing blue dagger, worried brave expression, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 12000
+  },
+  "pip": {
+    "display_name": "Pip Toprakaltı (Yarımlık Yoldaş)",
+    "prompt": "Stylized fantasy halfling gardener companion, small stout figure, sandy curly hair, rolled-up sleeves, big backpack with pots pans and rope, cooking ladle and short sword, cheerful loyal expression, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 12000
+  },
+  "sylwen": {
+    "display_name": "Leydi Sylwen (Elf Leydi)",
+    "prompt": "Stylized fantasy elf sorceress queen, tall ethereal elegant figure, long flowing white-gold hair, pointed ears, shimmering white and silver gown, glowing crystal vial in raised hand, serene powerful aura, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  },
+  "ravox": {
+    "display_name": "Ravox Gölgeyürek (Kolcu-Suikastçı)",
+    "prompt": "Stylized fantasy rogue assassin ranger, lean athletic hooded figure, dark grey and black leather armor with many straps and daggers, twin curved blades, face half-hidden by hood, crouching-ready stance but standing straight, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 15000
+  }
+}

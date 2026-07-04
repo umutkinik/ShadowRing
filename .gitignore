@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Arşiv — eski SpriteKit projesi (kendi git geçmişi var)
+LordOfDeffance/
+
+# Gizli — API anahtarları ASLA commit edilmez
+Golgehalka/tools/meshy/.env
+
+# Unity üretilen dosyalar (ShadowRing)
+ShadowRing/[Ll]ibrary/
+ShadowRing/[Tt]emp/
+ShadowRing/[Oo]bj/
+ShadowRing/[Ll]ogs/
+ShadowRing/[Uu]serSettings/
+ShadowRing/[Mm]emoryCaptures/
+ShadowRing/*.slnx
+ShadowRing/*.sln
+ShadowRing/*.csproj
+ShadowRing/.vs/
+ShadowRing/.idea/
+ShadowRing/.vscode/

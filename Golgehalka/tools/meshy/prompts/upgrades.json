@@ -1,0 +1,17 @@
+{
+  "tier1_base": {
+    "display_name": "Kule Platformu — Kademe 1",
+    "prompt": "Simple circular stone tower platform, rough cobblestone base with wooden palisade edge posts, humble fantasy village craftsmanship, single environment prop, game-ready low poly, clean silhouette, flat top surface for placing character",
+    "target_polycount": 5000
+  },
+  "tier2_base": {
+    "display_name": "Kule Platformu — Kademe 2",
+    "prompt": "Ornate circular stone tower platform, cut stone blocks with bronze trim ring, carved edge reliefs, two small banner poles, sturdy fortress craftsmanship, single environment prop, game-ready low poly, clean silhouette, flat top surface for placing character",
+    "target_polycount": 6000
+  },
+  "tier3_base": {
+    "display_name": "Kule Platformu — Kademe 3",
+    "prompt": "Majestic circular tower platform, polished white stone with gold trim, glowing blue rune circle engraved on surface, small floating crystal shards around edge, royal fantasy craftsmanship, single environment prop, game-ready low poly, clean silhouette, flat top surface",
+    "target_polycount": 7000
+  }
+}

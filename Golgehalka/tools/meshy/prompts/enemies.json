@@ -1,0 +1,52 @@
+{
+  "void_spawn": {
+    "display_name": "Boşluk Yavrusu (temel sürü)",
+    "prompt": "Stylized fantasy goblin-like void creature, small hunched body, dark grey cracked skin, glowing purple eyes, crude rusty blade, ragged leather scraps, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 8000
+  },
+  "bloodclaw": {
+    "display_name": "Kanpençe Lejyoneri (zırhlı)",
+    "prompt": "Stylized fantasy brutish orc warrior, tall muscular build, heavy crude black iron plate armor, jagged cleaver sword, white war paint handprint on helmet, fierce tusks, full body, T-pose, single character, game-ready low poly, clean silhouette",
+    "target_polycount": 12000
+  },
+  "wolfrider": {
+    "display_name": "Kurtbinici Akıncı (hızlı)",
+    "prompt": "Stylized fantasy goblin raider riding a giant snarling dire wolf, shaggy dark fur, crude leather saddle, rider holding short spear, dynamic but neutral standing pose, single mounted unit, game-ready low poly, clean silhouette",
+    "target_polycount": 14000
+  },
+  "sky_terror": {
+    "display_name": "Gök Dehşeti (hava)",
+    "prompt": "Stylized fantasy wyvern-like winged beast, leathery dark grey wings spread wide, long serpentine neck and tail, no rider, sharp beak-like head, flying posture with wings extended, single creature, game-ready low poly, clean silhouette",
+    "target_polycount": 12000
+  },
+  "stone_behemoth": {
+    "display_name": "Taş Behemot (mini-boss)",
+    "prompt": "Stylized fantasy massive stone troll giant, rocky moss-covered hide, hunched heavy posture, enormous wooden club, small head with dull expression, cracked stone skin details, full body, T-pose, single character, game-ready low poly",
+    "target_polycount": 18000
+  },
+  "shroud_king": {
+    "display_name": "Kefen Kralı (elit)",
+    "prompt": "Stylized fantasy ghostly wraith king, tattered flowing black hooded robes, empty dark void where face should be, jagged dark iron crown, spectral curved sword, floating ethereal lower body fading to mist, single character, game-ready low poly",
+    "target_polycount": 12000
+  },
+  "malketh": {
+    "display_name": "Malketh Beyaz-Hain (Act II boss)",
+    "prompt": "Stylized fantasy corrupted evil wizard, tall gaunt figure, once-white robes now stained silver-grey with black veins, long white beard, sinister expression, black metal staff topped with dark swirling orb, full body, T-pose, single character, game-ready low poly",
+    "target_polycount": 18000
+  },
+  "morwen": {
+    "display_name": "Morwen Ağ-Ana (Act III boss)",
+    "prompt": "Stylized fantasy giant monstrous spider queen, spiked black chitin carapace, eight segmented legs, cluster of glowing green eyes, venom-dripping fangs, web spinnerets, bloated abdomen with pale markings, single creature, game-ready low poly",
+    "target_polycount": 18000
+  },
+  "molgroth": {
+    "display_name": "Molgroth Köz-İblis (süper elit)",
+    "prompt": "Stylized fantasy huge fire demon, molten cracked obsidian skin glowing orange from within, curved ram horns, smoke-like dark wings, flaming whip in one hand and burning sword in other, full body, T-pose, single character, game-ready low poly",
+    "target_polycount": 20000
+  },
+  "zarok": {
+    "display_name": "Zarok Boşluk Efendisi (final boss)",
+    "prompt": "Stylized fantasy towering dark lord, full spiked black obsidian plate armor, tall horned helm with jagged crown spikes hiding face completely, massive two-handed war mace, swirling purple void energy emanating from armor gaps, cape of living shadow, full body, T-pose, single character, game-ready low poly, imposing silhouette",
+    "target_polycount": 25000
+  }
+}
