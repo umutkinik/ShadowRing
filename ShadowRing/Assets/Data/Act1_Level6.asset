@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784d610829d14407eb4df1a340f573c1, type: 3}
+  m_Name: Act1_Level6
+  m_EditorClassIdentifier: Assembly-CSharp::Golgehalka.Data.LevelDefinition
+  levelId: act1_level6
+  nameKey: campaign.act1.title
+  startingGold: 250
+  startingLives: 20
+  waves:
+  - entries:
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 14
+      interval: 0.6
+      startDelay: 0.5
+    rewardGold: 30
+  - entries:
+    - enemy: {fileID: 11400000, guid: 3070e4d57851747e1b1f0ae5a8b7d898, type: 2}
+      count: 8
+      interval: 0.5
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 10
+      interval: 0.7
+      startDelay: 3
+    rewardGold: 35
+  - entries:
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 6
+      interval: 1
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: 3070e4d57851747e1b1f0ae5a8b7d898, type: 2}
+      count: 6
+      interval: 0.5
+      startDelay: 4
+    rewardGold: 40
+  - entries:
+    - enemy: {fileID: 11400000, guid: 303a434b2490143b8ab5de4230f80b67, type: 2}
+      count: 1
+      interval: 1
+      startDelay: 1
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 12
+      interval: 0.6
+      startDelay: 3
+    rewardGold: 45
+  - entries:
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 8
+      interval: 0.9
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 12
+      interval: 0.6
+      startDelay: 4
+    rewardGold: 50
+  - entries:
+    - enemy: {fileID: 11400000, guid: 3070e4d57851747e1b1f0ae5a8b7d898, type: 2}
+      count: 12
+      interval: 0.4
+      startDelay: 0.5
+    rewardGold: 55
+  - entries:
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 10
+      interval: 0.8
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: 3070e4d57851747e1b1f0ae5a8b7d898, type: 2}
+      count: 8
+      interval: 0.4
+      startDelay: 5
+    rewardGold: 60
+  - entries:
+    - enemy: {fileID: 11400000, guid: 2cc522df52cce4d628f056d4a4dd02e9, type: 2}
+      count: 1
+      interval: 1
+      startDelay: 1
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 15
+      interval: 0.5
+      startDelay: 3
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 6
+      interval: 1
+      startDelay: 6
+    rewardGold: 65

@@ -34,5 +34,8 @@ namespace Golgehalka.Data
         [Header("Mermi")]
         public GameObject projectilePrefab;
         public float projectileSpeed = 12f;
+
+        [Header("Görsel")]
+        public GameObject towerPrefab;      // kahramana özel kule prefab'ı (modeliyle)
     }
 }

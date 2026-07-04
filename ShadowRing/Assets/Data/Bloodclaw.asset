@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c20ed12700f4948cfb4576cc8b935b81, type: 3}
+  m_Name: Bloodclaw
+  m_EditorClassIdentifier: Assembly-CSharp::Golgehalka.Data.EnemyDefinition
+  enemyId: bloodclaw
+  nameKey: enemy.bloodclaw.name
+  maxHealth: 180
+  armor: 0.35
+  moveSpeed: 1.6
+  isFlying: 0
+  isBoss: 0
+  goldReward: 12
+  livesCost: 1
+  prefab: {fileID: 4365285081050650354, guid: b063232c05ec3416080ee79e6f72312a, type: 3}

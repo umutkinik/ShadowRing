@@ -23,6 +23,13 @@ namespace Golgehalka.Core
         private void OnEnable() => Enemy.OnAnyEnemyDied += HandleEnemyGone;
         private void OnDisable() => Enemy.OnAnyEnemyDied -= HandleEnemyGone;
 
+        /// Bölüm seçici — yalnızca ilk dalga başlamadan önce değiştirilebilir.
+        public void SetLevel(LevelDefinition newLevel)
+        {
+            if (CurrentWave > 0 || GameManager.Instance.State == GameState.WaveActive) return;
+            level = newLevel;
+        }
+
         /// UI'daki "Sonraki Dalga" butonu çağırır (hud.next_wave).
         public void StartNextWave()
         {

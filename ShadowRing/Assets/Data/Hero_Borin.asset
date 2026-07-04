@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51a220a684db94c52b1ba91db414e2d4, type: 3}
-  m_Name: Hero_Borin
+  m_Name: Hero_borin
   m_EditorClassIdentifier: Assembly-CSharp::Golgehalka.Data.HeroDefinition
   heroId: borin
   nameKey: hero.borin.name
@@ -34,5 +34,6 @@ MonoBehaviour:
     range: 5.5
     fireRate: 0.9
     tierModel: {fileID: 0}
-  projectilePrefab: {fileID: 6548334619529265147, guid: 4b70c829626a54792a992d876cfe6ec1, type: 3}
+  projectilePrefab: {fileID: 2246899306934420869, guid: 4b70c829626a54792a992d876cfe6ec1, type: 3}
   projectileSpeed: 14
+  towerPrefab: {fileID: 99907763776459679, guid: 8156a379246fe4b638691591e8bd9f1f, type: 3}

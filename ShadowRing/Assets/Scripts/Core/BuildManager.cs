@@ -57,7 +57,9 @@ namespace Golgehalka.Core
                 // UI: shop.not_enough_gold göster
                 return;
             }
-            var go = Instantiate(towerBasePrefab, node.transform.position, Quaternion.identity);
+            // Kahramana özel prefab varsa onu, yoksa genel tabanı kullan
+            var prefab = selectedHero.towerPrefab != null ? selectedHero.towerPrefab : towerBasePrefab;
+            var go = Instantiate(prefab, node.transform.position, Quaternion.identity);
             var tower = go.GetComponent<Tower>();
             tower.Init(selectedHero);
             node.Occupant = tower;
