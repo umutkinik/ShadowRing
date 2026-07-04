@@ -195,7 +195,8 @@ namespace Golgehalka.EditorTools
 
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground";
-            ground.transform.localScale = new Vector3(2.2f, 1, 2.2f);
+            // 30×24: orman kuşağı (±14 / ±10) dahil tüm görüş alanını kaplar
+            ground.transform.localScale = new Vector3(3f, 1, 2.4f);
             Tint(ground, new Color(0.25f, 0.32f, 0.22f));
 
             // Yol objesi boş başlar — MapBuilder çalışma anında bölüme göre kurar
