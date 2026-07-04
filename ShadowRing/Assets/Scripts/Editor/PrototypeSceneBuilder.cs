@@ -651,8 +651,8 @@ namespace Golgehalka.EditorTools
             // --- Diablo-vari giydirme: rünik çerçeveler (varsa) ---
             var btnFrame = UISprite("btn_frame", new Vector4(260, 220, 260, 220));
             var panelFrame = UISprite("panel_frame", new Vector4(340, 300, 340, 300));
-            SkinBar(top, btnFrame);      // çerçeve barın zemini olur — metin/butonlar üstte
-            SkinBar(bottom, btnFrame);
+            AddFrame(top, btnFrame);     // fillCenter=false: yalnız raylar, içerik daima görünür
+            AddFrame(bottom, btnFrame);
             AddFrame(nextBtn.GetComponent<RectTransform>(), btnFrame);
             foreach (var hb in hud.heroButtons) AddFrame(hb.GetComponent<RectTransform>(), btnFrame);
             foreach (var sb2 in hud.speedButtons) AddFrame(sb2.GetComponent<RectTransform>(), btnFrame);
@@ -814,6 +814,7 @@ namespace Golgehalka.EditorTools
             var img = go.GetComponent<UnityEngine.UI.Image>();
             img.sprite = frame;
             img.type = UnityEngine.UI.Image.Type.Sliced;
+            img.fillCenter = false; // yalnız ray+köşe çizilir — orta ne olursa olsun görünmez
             img.raycastTarget = false;
             // Kenar rayları hedefin %38'inden kalın olamaz — metni asla örtmez
             float w = Mathf.Abs(target.sizeDelta.x); if (w < 2) w = 1920;
