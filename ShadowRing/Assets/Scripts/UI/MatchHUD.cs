@@ -28,8 +28,6 @@ namespace Golgehalka.UI
         public Button nextWaveButton;
         public Button[] heroButtons;
         public TMP_Text[] heroButtonLabels;
-        public Button[] levelButtons;
-        public GameObject levelRow;
         public Button[] speedButtons;      // 1× / 2× / 3×
         public Button langButton;
         public TMP_Text langButtonLabel;
@@ -79,15 +77,7 @@ namespace Golgehalka.UI
                 heroButtonLabels[i].text = heroes[i].heroId + " (" + heroes[i].tiers[0].cost + ")";
             }
 
-            for (int i = 0; i < levelButtons.Length; i++)
-            {
-                int idx = i;
-                levelButtons[i].onClick.AddListener(() =>
-                {
-                    waveManager.SetLevel(levels[idx]);
-                    RefreshStats();
-                });
-            }
+            SelectCampaignLevel(); // kampanya: ilk bitmemiş bölümden devam
 
             float[] speeds = { 1f, 2f, 3f };
             for (int i = 0; i < speedButtons.Length; i++)
@@ -198,13 +188,20 @@ namespace Golgehalka.UI
 
         public void SetSpeed(float multiplier) => GameManager.Instance.SetGameSpeed(multiplier);
 
+        /// Kampanya ilerleyişi: profildeki ilk tamamlanmamış bölüm yüklenir.
+        /// Zafer bölümü profile işler → sahne yeniden yüklenince sıradaki gelir.
+        private void SelectCampaignLevel()
+        {
+            if (levels == null || levels.Length == 0) return;
+            int idx = levels.Length - 1; // hepsi bittiyse son bölüm (sonsuz mod gelene dek)
+            for (int i = 0; i < levels.Length; i++)
+                if (!PlayerProfile.IsCompleted(levels[i].levelId)) { idx = i; break; }
+            waveManager.SetLevel(levels[idx]);
+            RefreshStats();
+        }
+
         private void Update()
         {
-            // Bölüm seçici yalnızca ilk dalga öncesi görünür
-            bool pickable = GameManager.Instance.State == GameState.Preparing &&
-                            waveManager.CurrentWave == 0;
-            if (levelRow.activeSelf != pickable) levelRow.SetActive(pickable);
-
             nextWaveButton.interactable =
                 GameManager.Instance.State == GameState.Preparing ||
                 GameManager.Instance.State == GameState.BetweenWaves;
@@ -219,7 +216,10 @@ namespace Golgehalka.UI
             goldText.text = L("hud.gold") + ": " + EconomyManager.Instance.Gold;
             livesText.text = L("hud.lives") + ": " + GameManager.Instance.Lives;
             waveText.text = L("hud.wave") + ": " + waveManager.CurrentWave + "/" + waveManager.TotalWaves;
-            levelText.text = waveManager.level != null ? waveManager.level.levelId : "-";
+            int levelNo = levels != null ? System.Array.IndexOf(levels, waveManager.level) + 1 : 0;
+            levelText.text = levelNo > 0
+                ? L("menu.campaign") + " " + levelNo + "/" + levels.Length
+                : "-";
         }
 
         private void HandleState(GameState state)

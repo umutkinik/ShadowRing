@@ -600,23 +600,7 @@ namespace Golgehalka.EditorTools
             hud.langButton = langBtn;
             hud.langButtonLabel = langLbl;
 
-            // --- Bölüm seçici (ilk dalga öncesi) ---
-            var lvlRow = UIPanel(t, "LevelRow", new Vector2(0, 1), new Vector2(1, 1),
-                new Vector2(0.5f, 1), new Vector2(0, -88), new Vector2(0, 76), new Color(0, 0, 0, 0.30f));
-            hud.levelRow = lvlRow.gameObject;
-            hud.levelButtons = new UnityEngine.UI.Button[levels.Length];
-            for (int i = 0; i < levels.Length; i++)
-            {
-                var (b, lbl) = UIButton(lvlRow, "Lvl" + (i + 1), (i + 1).ToString(),
-                    new Vector2(24 + i * 102, 0), new Vector2(92, 56), btnBg, null);
-                lbl.fontSize = 26;
-                // Act renk şeridi: I yeşil, II gri-mavi, III kızıl
-                b.GetComponent<UnityEngine.UI.Image>().color = i < 6
-                    ? new Color(0.12f, 0.18f, 0.12f, 0.92f)
-                    : i < 12 ? new Color(0.13f, 0.15f, 0.20f, 0.92f)
-                             : new Color(0.20f, 0.10f, 0.08f, 0.92f);
-                hud.levelButtons[i] = b;
-            }
+            // Bölüm seçici kaldırıldı — kampanya profildeki ilerlemeye göre sırayla akar
 
             // --- Alt bar ---
             var bottom = UIPanel(t, "BottomBar", new Vector2(0, 0), new Vector2(1, 0),
