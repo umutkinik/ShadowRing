@@ -51,6 +51,7 @@ namespace Golgehalka.Combat
             TotalSpent += cost;
             TierIndex++;
             ApplyTierVisual();
+            Core.AudioManager.Upgrade();
             return true;
         }
 
@@ -132,6 +133,7 @@ namespace Golgehalka.Combat
                 Quaternion.identity);
             go.GetComponent<Projectile>().Init(
                 target, Tier.damage, Hero.damageType, Hero.armorPenetration, Hero.projectileSpeed);
+            Core.AudioManager.Arrow();
         }
 
         private System.Collections.IEnumerator AttackPunch()

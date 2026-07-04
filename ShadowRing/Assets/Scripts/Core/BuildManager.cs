@@ -86,6 +86,7 @@ namespace Golgehalka.Core
             node.Occupant = tower;
             var nodeRenderer = node.GetComponent<Renderer>();
             if (nodeRenderer != null) nodeRenderer.enabled = false; // platform kulenin altında kalmasın
+            AudioManager.Build();
             selectedHero = null; // yerleştirme sonrası seçim sıfırlanır
         }
     }

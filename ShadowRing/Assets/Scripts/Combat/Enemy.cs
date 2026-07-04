@@ -92,6 +92,7 @@ namespace Golgehalka.Combat
         private void Die()
         {
             EconomyManager.Instance.AddGold(Def.goldReward);
+            AudioManager.Coin();
             OnAnyEnemyDied?.Invoke(this);
             StartCoroutine(DeathShrink()); // hızlı küçülme — anlık yok oluştan iyi
         }

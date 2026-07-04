@@ -223,6 +223,35 @@ namespace Golgehalka.EditorTools
             bso.FindProperty("towerBasePrefab").objectReferenceValue = borin.towerPrefab;
             bso.ApplyModifiedPropertiesWithoutUndo();
 
+            // Ses: sentez SFX + savaş müziği (CC-BY: Kevin MacLeod — Heroic Age)
+            var audio = mgr.AddComponent<AudioManager>();
+            audio.arrow = LoadClip("sfx_arrow");
+            audio.hit = LoadClip("sfx_hit");
+            audio.coin = LoadClip("sfx_coin");
+            audio.build = LoadClip("sfx_build");
+            audio.upgrade = LoadClip("sfx_upgrade");
+            audio.victory = LoadClip("sfx_victory");
+            audio.defeat = LoadClip("sfx_defeat");
+            audio.click = LoadClip("sfx_click");
+            audio.flame = LoadClip("sfx_flame");
+            audio.battleMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
+
+            // Ejderha uçuşu — ortam gösterisi
+            var dragonModel = AssetDatabase.LoadAssetAtPath<GameObject>(ModelDir + "/sky_terror.glb");
+            if (dragonModel != null)
+            {
+                var dragonRoot = new GameObject("Dragon");
+                var inst = Object.Instantiate(dragonModel, dragonRoot.transform);
+                inst.transform.localScale = Vector3.one * 1.5f;
+                string dragonPath = PrefabDir + "/Dragon.prefab";
+                AssetDatabase.DeleteAsset(dragonPath);
+                var dragonPrefab = PrefabUtility.SaveAsPrefabAsset(dragonRoot, dragonPath);
+                Object.DestroyImmediate(dragonRoot);
+
+                var flyby = mgr.AddComponent<DragonFlyby>();
+                flyby.dragonPrefab = dragonPrefab;
+            }
+
             var hud = BuildHUD(wave, build,
                 new[] { borin, faelyn, elwin, kael, baldric, milo, pip, sylwen, ravox }, levels);
 
@@ -599,6 +628,9 @@ namespace Golgehalka.EditorTools
             inst.transform.localScale = localScale;
             return true;
         }
+
+        private static AudioClip LoadClip(string name) =>
+            AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name + ".wav");
 
         private static void EnsureFolder(string parent, string name)
         {
