@@ -234,9 +234,12 @@ namespace Golgehalka.EditorTools
             audio.defeat = LoadClip("sfx_defeat");
             audio.click = LoadClip("sfx_click");
             audio.flame = LoadClip("sfx_flame");
+            audio.thunder = LoadClip("sfx_thunder");
+            audio.quake = LoadClip("sfx_quake");
             audio.battleMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
 
-            // Ejderha uçuşu — ortam gösterisi
+            // Ortam olayları: ejderha, yıldırım, ateş yağmuru, deprem
+            var events = mgr.AddComponent<AmbientEvents>();
             var dragonModel = AssetDatabase.LoadAssetAtPath<GameObject>(ModelDir + "/sky_terror.glb");
             if (dragonModel != null)
             {
@@ -247,9 +250,7 @@ namespace Golgehalka.EditorTools
                 AssetDatabase.DeleteAsset(dragonPath);
                 var dragonPrefab = PrefabUtility.SaveAsPrefabAsset(dragonRoot, dragonPath);
                 Object.DestroyImmediate(dragonRoot);
-
-                var flyby = mgr.AddComponent<DragonFlyby>();
-                flyby.dragonPrefab = dragonPrefab;
+                events.dragonPrefab = dragonPrefab;
             }
 
             var hud = BuildHUD(wave, build,

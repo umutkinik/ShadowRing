@@ -16,6 +16,9 @@ namespace Golgehalka.Combat
         /// Yol üzerindeki ilerleme — "First/Last" hedefleme için kullanılır.
         public float PathProgress { get; private set; }
 
+        /// Hız çarpanı — yavaşlatma etkileri (deprem, Sylwen aurası vb.) için.
+        public float SpeedFactor { get; set; } = 1f;
+
         public static event Action<Enemy> OnAnyEnemyDied; // WaveManager sayaç tutar
 
         /// Sahnedeki canlı düşman kaydı — kuleler sahne taraması yerine bunu gezer
@@ -55,7 +58,7 @@ namespace Golgehalka.Combat
         {
             Vector3 target = path.GetPoint(waypointIndex);
             transform.position = Vector3.MoveTowards(
-                transform.position, target, Def.moveSpeed * Time.deltaTime);
+                transform.position, target, Def.moveSpeed * SpeedFactor * Time.deltaTime);
             transform.LookAt(target);
 
             // Prosedürel yürüyüş: hıza bağlı iki yana sallanma + minik zıplama
