@@ -65,34 +65,58 @@ namespace Golgehalka.EditorTools
             WaveDefinition W(int no, params SpawnEntry[] e) =>
                 new WaveDefinition { rewardGold = 25 + 5 * no, entries = e };
 
+            // Her bölümün KENDİ haritası: yol (P) + platformlar (N, yoldan uzak)
             var levels = new[]
             {
+                // B1 — Klasik S-kıvrımı
                 MakeLevel(1, new[] {
                     W(1, S(voidSpawn, 5)), W(2, S(voidSpawn, 7)), W(3, S(voidSpawn, 9)),
-                    W(4, S(voidSpawn, 11)), W(5, S(voidSpawn, 14)) }),
+                    W(4, S(voidSpawn, 11)), W(5, S(voidSpawn, 14)) },
+                    P(-10, 5, -2, 5, 1, 2, -3, -1, 2, -4, 10, -4),
+                    N(-7, 3.2f, -4, 6.8f, 1.5f, 4.2f, -3.5f, 1.2f, 0.5f, -1.2f, -5, -3, 4, -2.2f, 6, -5.8f)),
+
+                // B2 — Yılan (üçlü yatay şerit)
                 MakeLevel(2, new[] {
                     W(1, S(voidSpawn, 8)), W(2, S(voidSpawn, 10)), W(3, S(voidSpawn, 12, 0.6f)),
-                    W(4, S(voidSpawn, 14)), W(5, S(voidSpawn, 16, 0.6f)), W(6, S(voidSpawn, 18, 0.5f)) }),
+                    W(4, S(voidSpawn, 14)), W(5, S(voidSpawn, 16, 0.6f)), W(6, S(voidSpawn, 18, 0.5f)) },
+                    P(-10, 6, 6, 6, 6, 2, -6, 2, -6, -2, 6, -2, 6, -6, -10, -6),
+                    N(-8, 4, -4, 4, 2, 4, -2, 0, 3, 0, 8.5f, 0, -4, -4, 2, -4)),
+
+                // B3 — U dönüşü
                 MakeLevel(3, new[] {
                     W(1, S(voidSpawn, 8), S(wolfrider, 3, 0.6f, 3f)), W(2, S(voidSpawn, 10), S(wolfrider, 4, 0.6f, 3f)),
                     W(3, S(wolfrider, 6, 0.5f)), W(4, S(voidSpawn, 12), S(wolfrider, 5, 0.5f, 2f)),
-                    W(5, S(voidSpawn, 14), S(wolfrider, 6, 0.5f, 2f)), W(6, S(wolfrider, 8, 0.4f), S(voidSpawn, 8, 0.8f, 4f)) }),
+                    W(5, S(voidSpawn, 14), S(wolfrider, 6, 0.5f, 2f)), W(6, S(wolfrider, 8, 0.4f), S(voidSpawn, 8, 0.8f, 4f)) },
+                    P(-10, -5, 3, -5, 3, 0, -3, 0, -3, 5, -10, 5),
+                    N(0, -2.8f, 5.5f, -2.5f, -6, -2.8f, 0, 2.3f, -6, 2.5f, 1, 5.2f, -1, -7, 5.5f, 2)),
+
+                // B4 — Tarak (Behemot bölümü)
                 MakeLevel(4, new[] {
                     W(1, S(voidSpawn, 12)), W(2, S(voidSpawn, 14), S(wolfrider, 5, 0.5f, 3f)),
                     W(3, S(wolfrider, 8, 0.5f)), W(4, S(behemoth, 1, 1f, 1f), S(voidSpawn, 8, 0.8f, 3f)),
                     W(5, S(voidSpawn, 16), S(wolfrider, 6, 0.5f, 3f)), W(6, S(voidSpawn, 18, 0.6f), S(wolfrider, 8, 0.4f, 4f)),
-                    W(7, S(voidSpawn, 20, 0.5f), S(wolfrider, 10, 0.4f, 3f)) }),
+                    W(7, S(voidSpawn, 20, 0.5f), S(wolfrider, 10, 0.4f, 3f)) },
+                    P(-10, 6, -3, 6, -3, -6, 4, -6, 4, 6, 10, 6),
+                    N(-5.5f, 4, -1, 3, -1, -3, 1, -4.2f, 6.5f, 3, 6.5f, -3, 1, 0, -5.5f, -3)),
+
+                // B5 — Çift viraj (Kanpençe bölümü)
                 MakeLevel(5, new[] {
                     W(1, S(bloodclaw, 4, 1.2f), S(voidSpawn, 10, 0.7f, 3f)), W(2, S(bloodclaw, 6, 1f)),
                     W(3, S(wolfrider, 8, 0.5f), S(bloodclaw, 4, 1f, 4f)), W(4, S(voidSpawn, 16, 0.6f), S(bloodclaw, 6, 1f, 3f)),
                     W(5, S(bloodclaw, 8, 0.9f)), W(6, S(behemoth, 1, 1f, 1f), S(bloodclaw, 4, 1f, 4f)),
-                    W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)) }),
+                    W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)) },
+                    P(-10, 0, -4, 0, -4, 5, 2, 5, 2, -5, 8, -5, 8, 0, 10, 0),
+                    N(-7, 2, -6.5f, -2.5f, -1, 2.8f, 0, 7, 4.5f, 2, 4.5f, -2.8f, -0.5f, -3, 10, -2.5f)),
+
+                // B6 — Kale kuşatması (Kefen Kralı finali — yol merkeze, "kapıya" iner)
                 MakeLevel(6, new[] {
                     W(1, S(voidSpawn, 14, 0.6f)), W(2, S(wolfrider, 8, 0.5f), S(voidSpawn, 10, 0.7f, 3f)),
                     W(3, S(bloodclaw, 6, 1f), S(wolfrider, 6, 0.5f, 4f)), W(4, S(behemoth, 1, 1f, 1f), S(voidSpawn, 12, 0.6f, 3f)),
                     W(5, S(bloodclaw, 8, 0.9f), S(voidSpawn, 12, 0.6f, 4f)), W(6, S(wolfrider, 12, 0.4f)),
                     W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)),
-                    W(8, S(shroudKing, 1, 1f, 1f), S(voidSpawn, 15, 0.5f, 3f), S(bloodclaw, 6, 1f, 6f)) }),
+                    W(8, S(shroudKing, 1, 1f, 1f), S(voidSpawn, 15, 0.5f, 3f), S(bloodclaw, 6, 1f, 6f)) },
+                    P(-10, -6, 6, -6, 6, 6, -6, 6, -6, 0, 2, 0, 2, -3),
+                    N(-2, -3.5f, 3.8f, -3.6f, 8.5f, 0, 3, 3, -3, 3, -8.5f, 3, -4.5f, -2, -8, -3.5f)),
             };
 
             // ---- 5) SAHNE ----
@@ -110,16 +134,21 @@ namespace Golgehalka.EditorTools
             ground.transform.localScale = new Vector3(2.2f, 1, 2.2f);
             Tint(ground, new Color(0.25f, 0.32f, 0.22f));
 
-            var path = BuildPath();
-            BuildNodes();
+            // Yol objesi boş başlar — MapBuilder çalışma anında bölüme göre kurar
+            var pathGO = new GameObject("WaypointPath");
+            var path = pathGO.AddComponent<WaypointPath>();
 
             var mgr = new GameObject("_Managers");
             mgr.AddComponent<GameManager>();
             mgr.AddComponent<EconomyManager>();
 
+            var mapBuilder = mgr.AddComponent<MapBuilder>();
+            mapBuilder.path = path;
+
             var wave = mgr.AddComponent<WaveManager>();
             wave.level = levels[0];
             wave.path = path;
+            wave.mapBuilder = mapBuilder;
 
             var build = mgr.AddComponent<BuildManager>();
             var bso = new SerializedObject(build);
@@ -201,7 +230,8 @@ namespace Golgehalka.EditorTools
             new TowerTier { cost = c3, damage = d3, range = r3, fireRate = f3 },
         };
 
-        private static LevelDefinition MakeLevel(int no, WaveDefinition[] waves) =>
+        private static LevelDefinition MakeLevel(
+            int no, WaveDefinition[] waves, Vector3[] wps, Vector3[] nodes) =>
             CreateAsset<LevelDefinition>(DataDir + "/Act1_Level" + no + ".asset", l =>
             {
                 l.levelId = "act1_level" + no;
@@ -209,7 +239,25 @@ namespace Golgehalka.EditorTools
                 l.startingGold = no >= 4 ? 250 : 200;
                 l.startingLives = 20;
                 l.waves = waves;
+                l.waypoints = wps;
+                l.nodePositions = nodes;
             });
+
+        /// x,z çiftlerinden waypoint dizisi (y=0.1 yol yüksekliği).
+        private static Vector3[] P(params float[] c)
+        {
+            var v = new Vector3[c.Length / 2];
+            for (int i = 0; i < v.Length; i++) v[i] = new Vector3(c[i * 2], 0.1f, c[i * 2 + 1]);
+            return v;
+        }
+
+        /// x,z çiftlerinden platform dizisi (y=0.15).
+        private static Vector3[] N(params float[] c)
+        {
+            var v = new Vector3[c.Length / 2];
+            for (int i = 0; i < v.Length; i++) v[i] = new Vector3(c[i * 2], 0.15f, c[i * 2 + 1]);
+            return v;
+        }
 
         // ================= HUD (Canvas + TMP + lokalizasyon) =================
 
@@ -389,66 +437,6 @@ namespace Golgehalka.EditorTools
         }
 
         // ================= SAHNE PARÇALARI =================
-
-        private static WaypointPath BuildPath()
-        {
-            var pathGO = new GameObject("WaypointPath");
-            Vector3[] pts =
-            {
-                new Vector3(-10, 0.1f, 5), new Vector3(-2, 0.1f, 5), new Vector3(1, 0.1f, 2),
-                new Vector3(-3, 0.1f, -1), new Vector3(2, 0.1f, -4), new Vector3(10, 0.1f, -4),
-            };
-            var wps = new Transform[pts.Length];
-            for (int i = 0; i < pts.Length; i++)
-            {
-                var wp = new GameObject("WP" + i);
-                wp.transform.SetParent(pathGO.transform);
-                wp.transform.position = pts[i];
-                wps[i] = wp.transform;
-            }
-            var path = pathGO.AddComponent<WaypointPath>();
-            var pso = new SerializedObject(path);
-            var arr = pso.FindProperty("waypoints");
-            arr.arraySize = wps.Length;
-            for (int i = 0; i < wps.Length; i++)
-                arr.GetArrayElementAtIndex(i).objectReferenceValue = wps[i];
-            pso.ApplyModifiedPropertiesWithoutUndo();
-
-            for (int i = 0; i < pts.Length - 1; i++)
-            {
-                var seg = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                seg.name = "PathSeg" + i;
-                Object.DestroyImmediate(seg.GetComponent<Collider>());
-                Vector3 a = pts[i], b = pts[i + 1];
-                seg.transform.position = (a + b) / 2f + Vector3.down * 0.05f;
-                seg.transform.rotation = Quaternion.LookRotation(b - a);
-                seg.transform.localScale = new Vector3(1.2f, 0.05f, (b - a).magnitude);
-                Tint(seg, new Color(0.45f, 0.38f, 0.28f));
-                seg.transform.SetParent(pathGO.transform);
-            }
-            return path;
-        }
-
-        private static void BuildNodes()
-        {
-            Vector3[] nodePts =
-            {
-                new Vector3(-6, 0.15f, 3), new Vector3(-4, 0.15f, 7), new Vector3(0, 0.15f, 3.2f),
-                new Vector3(-1, 0.15f, 0.5f), new Vector3(-5, 0.15f, -2.5f), new Vector3(0, 0.15f, -2),
-                new Vector3(4, 0.15f, -2), new Vector3(5, 0.15f, -6),
-            };
-            var parent = new GameObject("PlacementNodes").transform;
-            foreach (var p in nodePts)
-            {
-                var node = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                node.name = "Node";
-                node.transform.SetParent(parent);
-                node.transform.position = p;
-                node.transform.localScale = new Vector3(1.4f, 0.3f, 1.4f);
-                Tint(node, new Color(0.55f, 0.5f, 0.4f));
-                node.AddComponent<PlacementNode>();
-            }
-        }
 
         // ================= YARDIMCILAR =================
 

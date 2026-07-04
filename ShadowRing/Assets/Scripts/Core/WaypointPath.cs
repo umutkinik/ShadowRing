@@ -11,6 +11,9 @@ namespace Golgehalka.Core
         public int Count => waypoints.Length;
         public Vector3 GetPoint(int index) => waypoints[index].position;
 
+        /// MapBuilder çalışma anında yeni güzergâh atar (bölüm değişimi).
+        public void SetWaypoints(Transform[] newWaypoints) => waypoints = newWaypoints;
+
         private void OnDrawGizmos()
         {
             if (waypoints == null || waypoints.Length < 2) return;

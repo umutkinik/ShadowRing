@@ -7,8 +7,15 @@ namespace Golgehalka.Combat
     /// Yerleştirilmiş kahraman kulesi: hedef seç, ateş et, kademe yükselt.
     public class Tower : MonoBehaviour
     {
+        /// Sahnedeki kurulu kuleler — harita yeniden kurulurken temizlik için.
+        public static readonly System.Collections.Generic.List<Tower> Active =
+            new System.Collections.Generic.List<Tower>();
+
         [SerializeField] private Transform firePoint;
         [SerializeField] private TargetPriority priority = TargetPriority.First;
+
+        private void OnEnable() => Active.Add(this);
+        private void OnDisable() => Active.Remove(this);
 
         public HeroDefinition Hero { get; private set; }
         public int TierIndex { get; private set; }

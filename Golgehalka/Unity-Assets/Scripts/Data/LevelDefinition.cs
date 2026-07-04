@@ -29,5 +29,9 @@ namespace Golgehalka.Data
         public int startingGold = 200;
         public int startingLives = 20;
         public WaveDefinition[] waves;
+
+        [Header("Harita — her bölümün kendi yolu ve platformları")]
+        public Vector3[] waypoints;      // düşman güzergâhı
+        public Vector3[] nodePositions;  // kule platformu yerleri
     }
 }

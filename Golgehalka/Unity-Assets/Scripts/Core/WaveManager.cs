@@ -13,6 +13,7 @@ namespace Golgehalka.Core
         // level için sessizce başarısız olmuştu — doğrudan atama kanıtlı yol).
         public LevelDefinition level;
         public WaypointPath path;
+        public MapBuilder mapBuilder;   // bölüm değişince haritayı yeniden kurar
 
         public int CurrentWave { get; private set; }
         public int TotalWaves => level != null ? level.waves.Length : 0;
@@ -23,12 +24,13 @@ namespace Golgehalka.Core
         private void OnEnable() => Enemy.OnAnyEnemyDied += HandleEnemyGone;
         private void OnDisable() => Enemy.OnAnyEnemyDied -= HandleEnemyGone;
 
-        /// Bölüm ekonomisini uygula: başlangıç altını + can (LevelDefinition'dan).
+        /// Bölüm başlangıcı: harita + ekonomi (LevelDefinition'dan).
         private void Start() => ApplyLevelStart();
 
         private void ApplyLevelStart()
         {
             if (level == null) return;
+            if (mapBuilder != null) mapBuilder.BuildFor(level);
             EconomyManager.Instance.SetGold(level.startingGold);
             GameManager.Instance.ResetLives(level.startingLives);
         }
