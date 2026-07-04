@@ -89,3 +89,8 @@ MonoBehaviour:
   - {x: 1, y: 0.15, z: 5.2}
   - {x: -1, y: 0.15, z: -7}
   - {x: 5.5, y: 0.15, z: 2}
+  decorPrefabs:
+  - {fileID: -8098169881513260187, guid: d2f3769aabfef4c7e83ae3a2b7b2458c, type: 3}
+  - {fileID: -8098169881513260187, guid: b4b3e6493360a4fe98db78f012789368, type: 3}
+  decorCount: 9
+  groundColor: {r: 0.27, g: 0.33, b: 0.19, a: 1}

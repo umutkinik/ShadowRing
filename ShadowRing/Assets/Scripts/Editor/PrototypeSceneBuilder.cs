@@ -177,10 +177,21 @@ namespace Golgehalka.EditorTools
 
             var cam = Camera.main;
             cam.orthographic = true;
-            cam.orthographicSize = 7f;
-            cam.transform.position = new Vector3(0, 14, -9);
-            cam.transform.rotation = Quaternion.Euler(55, 0, 0);
+            cam.orthographicSize = 7.5f;
+            cam.transform.position = new Vector3(0, 13.5f, -10.5f);
+            cam.transform.rotation = Quaternion.Euler(50, 0, 0); // 55→50: siluetler daha okunur
             cam.backgroundColor = new Color(0.09f, 0.10f, 0.13f);
+
+            // Sıcak öğleden sonra ışığı + yumuşak gölgeler
+            var lightGO = GameObject.Find("Directional Light");
+            if (lightGO != null)
+            {
+                var l = lightGO.GetComponent<Light>();
+                l.color = new Color(1f, 0.95f, 0.84f);
+                l.intensity = 1.15f;
+                l.shadows = LightShadows.Soft;
+                lightGO.transform.rotation = Quaternion.Euler(48, -32, 0);
+            }
 
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground";
@@ -198,6 +209,8 @@ namespace Golgehalka.EditorTools
             var mapBuilder = mgr.AddComponent<MapBuilder>();
             mapBuilder.path = path;
             mapBuilder.groundRenderer = ground.GetComponent<Renderer>();
+            mapBuilder.groundTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/grass_diff.jpg");
+            mapBuilder.pathTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/dirt_diff.jpg");
 
             var wave = mgr.AddComponent<WaveManager>();
             wave.level = levels[0];

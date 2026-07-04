@@ -13,6 +13,8 @@ namespace Golgehalka.Core
     {
         public WaypointPath path;        // sahnedeki (boş) yol objesi
         public Renderer groundRenderer;  // bölüm rengine boyanır
+        public Texture2D groundTexture;  // çim (CC0 Poly Haven)
+        public Texture2D pathTexture;    // toprak (CC0 Poly Haven)
 
         private readonly List<GameObject> spawned = new List<GameObject>();
         private Material pathMat, nodeMat;
@@ -21,8 +23,13 @@ namespace Golgehalka.Core
         {
             if (pathMat != null) return;
             var shader = Shader.Find("Universal Render Pipeline/Lit");
-            pathMat = new Material(shader) { color = new Color(0.45f, 0.38f, 0.28f) };
-            nodeMat = new Material(shader) { color = new Color(0.55f, 0.5f, 0.4f) };
+            pathMat = new Material(shader) { color = new Color(0.9f, 0.82f, 0.7f) };
+            if (pathTexture != null)
+            {
+                pathMat.mainTexture = pathTexture;
+                pathMat.mainTextureScale = new Vector2(0.5f, 0.5f);
+            }
+            nodeMat = new Material(shader) { color = new Color(0.62f, 0.6f, 0.55f) };
         }
 
         public void BuildFor(LevelDefinition level)
@@ -48,7 +55,7 @@ namespace Golgehalka.Core
             }
             path.SetWaypoints(wps);
 
-            // 2) Yol şeritleri (görsel)
+            // 2) Yol şeritleri (dokulu) + köşe yumuşatma diskleri
             for (int i = 0; i < level.waypoints.Length - 1; i++)
             {
                 Vector3 a = level.waypoints[i], b = level.waypoints[i + 1];
@@ -57,30 +64,81 @@ namespace Golgehalka.Core
                 Destroy(seg.GetComponent<Collider>());
                 seg.transform.position = (a + b) / 2f + Vector3.down * 0.05f;
                 seg.transform.rotation = Quaternion.LookRotation(b - a);
-                seg.transform.localScale = new Vector3(1.2f, 0.05f, (b - a).magnitude + 1.2f);
+                seg.transform.localScale = new Vector3(1.3f, 0.05f, (b - a).magnitude);
                 seg.GetComponent<Renderer>().sharedMaterial = pathMat;
                 seg.transform.SetParent(path.transform);
                 spawned.Add(seg);
             }
+            for (int i = 1; i < level.waypoints.Length - 1; i++)
+            {
+                var cap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                cap.name = "PathCorner" + i;
+                Destroy(cap.GetComponent<Collider>());
+                cap.transform.position = level.waypoints[i] + Vector3.down * 0.05f;
+                cap.transform.localScale = new Vector3(1.3f, 0.024f, 1.3f);
+                cap.GetComponent<Renderer>().sharedMaterial = pathMat;
+                cap.transform.SetParent(path.transform);
+                spawned.Add(cap);
+            }
 
-            // 3) Kule platformları
+            // 3) Kule platformları — taş yuva diskleri
             foreach (Vector3 p in level.nodePositions)
             {
-                var node = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                var node = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 node.name = "Node";
                 node.transform.position = p;
-                node.transform.localScale = new Vector3(1.4f, 0.3f, 1.4f);
+                node.transform.localScale = new Vector3(1.5f, 0.07f, 1.5f);
                 node.GetComponent<Renderer>().sharedMaterial = nodeMat;
+                // İnce diske dokunmak zor — geniş görünmez tıklama hacmi ekle
+                Destroy(node.GetComponent<Collider>());
+                var box = node.AddComponent<BoxCollider>();
+                box.size = new Vector3(0.95f, 8f, 0.95f);
                 node.AddComponent<PlacementNode>();
                 spawned.Add(node);
             }
 
-            // 4) Tema: zemin rengi + dekor serpme
+            // 4) Tema: dokulu zemin + bölüm tonu + dekor + orman sınırı
             if (groundRenderer != null)
             {
-                groundRenderer.material.color = level.groundColor; // instance materyal
+                var gm = groundRenderer.material; // instance
+                if (groundTexture != null)
+                {
+                    gm.mainTexture = groundTexture;
+                    gm.mainTextureScale = new Vector2(9f, 6f);
+                }
+                gm.color = Color.Lerp(Color.white, level.groundColor, 0.35f);
             }
             ScatterDecor(level);
+            PlantBorderForest(level);
+        }
+
+        /// Harita kenarını ağaç kuşağıyla sar — "boşlukta yüzen zemin" hissini bitirir.
+        private void PlantBorderForest(LevelDefinition level)
+        {
+            if (level.decorPrefabs == null || level.decorPrefabs.Length == 0) return;
+            var trees = level.decorPrefabs[0];
+            if (trees == null) return;
+            var rng = new System.Random(level.levelId.GetHashCode() * 31 + 7);
+
+            for (int i = 0; i < 26; i++)
+            {
+                // Dikdörtgen bant: iç saha (±11, ±8) dışı, görüş alanı (±14, ±10) içi
+                float x, z;
+                if (rng.NextDouble() < 0.5)
+                {   // üst/alt bant
+                    x = (float)(rng.NextDouble() * 28 - 14);
+                    z = (float)(rng.NextDouble() * 2 + 8.2) * (rng.NextDouble() < 0.5 ? 1 : -1);
+                }
+                else
+                {   // sol/sağ bant
+                    x = (float)(rng.NextDouble() * 2.6 + 11.2) * (rng.NextDouble() < 0.5 ? 1 : -1);
+                    z = (float)(rng.NextDouble() * 20 - 10);
+                }
+                var deco = Instantiate(trees, new Vector3(x, 0, z),
+                    Quaternion.Euler(0, (float)(rng.NextDouble() * 360), 0));
+                deco.transform.localScale = Vector3.one * (0.9f + (float)rng.NextDouble() * 0.7f);
+                spawned.Add(deco);
+            }
         }
 
         /// Çevre modellerini yoldan/platformlardan uzağa, bölüm başına
