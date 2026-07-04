@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2864020931708170148
+--- !u!1 &3706844756000346376
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4882227571256658436}
-  - component: {fileID: 4530933592538826479}
-  - component: {fileID: 9142907035341560691}
+  - component: {fileID: 6457417298486889635}
+  - component: {fileID: 5427881377839849193}
+  - component: {fileID: 5972507345861944866}
   m_Layer: 0
   m_Name: sky_terror(Clone)
   m_TagString: Untagged
@@ -18,36 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4882227571256658436
+--- !u!4 &6457417298486889635
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2864020931708170148}
+  m_GameObject: {fileID: 3706844756000346376}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 2.6, y: 2.6, z: 2.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2347091307631976049}
+  m_Father: {fileID: 5025274568556662252}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4530933592538826479
+--- !u!33 &5427881377839849193
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2864020931708170148}
+  m_GameObject: {fileID: 3706844756000346376}
   m_Mesh: {fileID: 1050908021570271116, guid: 0938e6dce4f2f4199b04ba9520ec9482, type: 3}
---- !u!23 &9142907035341560691
+--- !u!23 &5972507345861944866
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2864020931708170148}
+  m_GameObject: {fileID: 3706844756000346376}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -90,7 +90,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5329482341009299567
+--- !u!1 &4245659018087234383
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2347091307631976049}
+  - component: {fileID: 5025274568556662252}
   m_Layer: 0
   m_Name: Dragon
   m_TagString: Untagged
@@ -106,19 +106,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2347091307631976049
+--- !u!4 &5025274568556662252
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5329482341009299567}
+  m_GameObject: {fileID: 4245659018087234383}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4882227571256658436}
+  - {fileID: 6457417298486889635}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

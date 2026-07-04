@@ -651,8 +651,8 @@ namespace Golgehalka.EditorTools
             // --- Diablo-vari giydirme: rünik çerçeveler (varsa) ---
             var btnFrame = UISprite("btn_frame", new Vector4(260, 220, 260, 220));
             var panelFrame = UISprite("panel_frame", new Vector4(340, 300, 340, 300));
-            AddFrame(top, btnFrame, 2.6f);     // ince şerit: kenarlar bar yüksekliğine sığsın
-            AddFrame(bottom, btnFrame, 2.6f);
+            SkinBar(top, btnFrame);      // çerçeve barın zemini olur — metin/butonlar üstte
+            SkinBar(bottom, btnFrame);
             AddFrame(nextBtn.GetComponent<RectTransform>(), btnFrame);
             foreach (var hb in hud.heroButtons) AddFrame(hb.GetComponent<RectTransform>(), btnFrame);
             foreach (var sb2 in hud.speedButtons) AddFrame(sb2.GetComponent<RectTransform>(), btnFrame);
@@ -815,10 +815,25 @@ namespace Golgehalka.EditorTools
             img.sprite = frame;
             img.type = UnityEngine.UI.Image.Type.Sliced;
             img.raycastTarget = false;
-            // Küçük öğelerde süslü kenarlar orantılı incelsin
-            float w = Mathf.Abs(target.sizeDelta.x) < 1 ? 400 : Mathf.Abs(target.sizeDelta.x);
-            img.pixelsPerUnitMultiplier = ppuOverride > 0f ? ppuOverride
-                : w < 150 ? 5f : w < 420 ? 3f : 1.2f;
+            // Kenar rayları hedefin %38'inden kalın olamaz — metni asla örtmez
+            float w = Mathf.Abs(target.sizeDelta.x); if (w < 2) w = 1920;
+            float h = Mathf.Abs(target.sizeDelta.y); if (h < 2) h = 300;
+            float ppu = Mathf.Max(1.2f, 220f / (h * 0.38f), 260f / (w * 0.40f));
+            img.pixelsPerUnitMultiplier = ppuOverride > 0f ? ppuOverride : ppu;
+            go.transform.SetSiblingIndex(0); // çerçeve İÇERİĞİN ARKASINDA kalır
+        }
+
+        /// Bar/paneli çerçevenin KENDİSİYLE kapla (çocuklar üstte kalır).
+        internal static void SkinBar(RectTransform bar, Sprite frame)
+        {
+            if (frame == null || bar == null) return;
+            var img = bar.GetComponent<UnityEngine.UI.Image>();
+            if (img == null) return;
+            float h = Mathf.Abs(bar.sizeDelta.y); if (h < 2) h = 90;
+            img.sprite = frame;
+            img.type = UnityEngine.UI.Image.Type.Sliced;
+            img.color = Color.white;
+            img.pixelsPerUnitMultiplier = 220f / (h * 0.42f);
         }
 
         internal static void EnsureFolder(string parent, string name)

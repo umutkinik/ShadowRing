@@ -138,6 +138,13 @@ namespace Golgehalka.EditorTools
             var ctrl = canvasGO.AddComponent<MainMenuController>();
             ctrl.zarok = zarokT;
             ctrl.useKeyArt = keyArt;
+
+            // Menü müziği (oyunla aynı tema, daha loş)
+            var music = canvasGO.AddComponent<AudioSource>();
+            music.clip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
+            music.loop = true;
+            music.playOnAwake = true;
+            music.volume = 0.4f;
             var t = canvasGO.transform;
             Color btnBg = new Color(0.08f, 0.05f, 0.04f, 0.72f);
             Color gold = new Color(0.85f, 0.66f, 0.32f);
