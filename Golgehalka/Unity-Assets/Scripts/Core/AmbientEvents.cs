@@ -57,9 +57,19 @@ namespace Golgehalka.Core
 
             Quaternion baseRot = Quaternion.LookRotation(to - from);
             var dragon = Instantiate(dragonPrefab, from, baseRot);
-            AudioManager.Flame();
+            AudioManager.Roar(); // giriş kükremesi
+
+            // Gövdeye bağlı ateş izi + sıcak parlama ışığı
+            VFX.Trail(dragon.transform, new Color(1f, 0.5f, 0.15f), 55f, 0.8f, 0.22f);
+            var glowGO = new GameObject("DragonGlow");
+            glowGO.transform.SetParent(dragon.transform, false);
+            var glow = glowGO.AddComponent<Light>();
+            glow.type = UnityEngine.LightType.Point;
+            glow.color = new Color(1f, 0.5f, 0.2f);
+            glow.intensity = 5f; glow.range = 9f;
 
             float fireTick = 0f;
+            float wingTick = 0f;
             while ((dragon.transform.position - to).sqrMagnitude > 1f)
             {
                 // 5.5 hız: heybetli süzülüş + kanat yalpası + hafif yükselme-alçalma
@@ -71,6 +81,13 @@ namespace Golgehalka.Core
                 p.y = 4.5f + Mathf.Sin(Time.time * 1.3f) * 0.5f;
                 dragon.transform.position = p;
 
+                wingTick -= Time.deltaTime;
+                if (wingTick <= 0f)
+                {
+                    wingTick = 0.75f;
+                    AudioManager.Wing(); // ritmik kanat çırpışı
+                }
+
                 fireTick -= Time.deltaTime;
                 if (fireTick <= 0f)
                 {
@@ -80,7 +97,7 @@ namespace Golgehalka.Core
                     // Alev patlaması + yükselen duman
                     VFX.Burst(g, new Color(1f, 0.55f, 0.15f), 24, 3.8f, 0.32f, 0.55f, 0.3f);
                     VFX.Burst(g + Vector3.up * 0.4f, new Color(0.3f, 0.25f, 0.22f, 0.7f), 8, 1.1f, 0.5f, 1f, -0.12f);
-                    if (Random.value < 0.3f) AudioManager.Flame();
+                    AudioManager.Flame();
                 }
                 yield return null;
             }

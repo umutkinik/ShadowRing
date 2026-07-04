@@ -45,8 +45,12 @@ namespace Golgehalka.Combat
             Health = def.maxHealth;
             path = followPath;
             waypointIndex = 0;
-            transform.position = path.GetPoint(0);
+            transform.position = path.GetPoint(0) + FlyOffset();
         }
+
+        /// Uçan birimler yolun 1.5 birim üzerinde süzülür.
+        private Vector3 FlyOffset() =>
+            Def != null && Def.isFlying ? Vector3.up * 1.5f : Vector3.zero;
 
         private void Update()
         {
@@ -56,7 +60,7 @@ namespace Golgehalka.Combat
 
         private void MoveAlongPath()
         {
-            Vector3 target = path.GetPoint(waypointIndex);
+            Vector3 target = path.GetPoint(waypointIndex) + FlyOffset();
             transform.position = Vector3.MoveTowards(
                 transform.position, target, Def.moveSpeed * SpeedFactor * Time.deltaTime);
             transform.LookAt(target);

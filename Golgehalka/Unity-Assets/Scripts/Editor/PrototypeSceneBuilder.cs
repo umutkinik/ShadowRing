@@ -43,6 +43,17 @@ namespace Golgehalka.EditorTools
                 d => { d.maxHealth = 1400; d.armor = 0.3f; d.moveSpeed = 0.9f; d.goldReward = 80; d.livesCost = 5; d.isBoss = true; });
             var shroudKing = MakeEnemy("ShroudKing", "shroud_king", new Color(0.2f, 0.1f, 0.3f), 1.6f,
                 d => { d.maxHealth = 900; d.armor = 0.2f; d.moveSpeed = 1.4f; d.goldReward = 100; d.livesCost = 5; d.isBoss = true; });
+            // Act II-III kadrosu
+            var skyTerror = MakeEnemy("SkyTerror", "sky_terror", new Color(0.35f, 0.35f, 0.45f), 1.2f,
+                d => { d.maxHealth = 90; d.moveSpeed = 2.8f; d.goldReward = 10; d.isFlying = true; }); // sadece Faelyn vurabilir!
+            var molgroth = MakeEnemy("Molgroth", "molgroth", new Color(0.8f, 0.3f, 0.1f), 2.4f,
+                d => { d.maxHealth = 2600; d.armor = 0.25f; d.moveSpeed = 1.2f; d.goldReward = 150; d.livesCost = 10; d.isBoss = true; });
+            var malketh = MakeEnemy("Malketh", "malketh", new Color(0.8f, 0.8f, 0.85f), 1.9f,
+                d => { d.maxHealth = 3200; d.armor = 0.15f; d.moveSpeed = 1.0f; d.goldReward = 200; d.livesCost = 20; d.isBoss = true; });
+            var morwen = MakeEnemy("Morwen", "morwen", new Color(0.15f, 0.3f, 0.15f), 2.5f,
+                d => { d.maxHealth = 4000; d.armor = 0.3f; d.moveSpeed = 1.1f; d.goldReward = 250; d.livesCost = 20; d.isBoss = true; });
+            var zarok = MakeEnemy("Zarok", "zarok", new Color(0.3f, 0.1f, 0.4f), 2.8f,
+                d => { d.maxHealth = 6000; d.armor = 0.3f; d.moveSpeed = 1.0f; d.goldReward = 500; d.livesCost = 20; d.isBoss = true; });
 
             // ---- 3) KAHRAMANLAR (kule prefab'ı + tanım) ----
             var borin = MakeHero("borin", new Color(0.4f, 0.55f, 0.8f), projectilePrefab, h =>
@@ -99,77 +110,148 @@ namespace Golgehalka.EditorTools
             WaveDefinition W(int no, params SpawnEntry[] e) =>
                 new WaveDefinition { rewardGold = 25 + 5 * no, entries = e };
 
-            // Her bölümün KENDİ haritası: yol (P) + platformlar (N, yoldan uzak)
+            // 6 temel yol düzeni — Act II ayna-X, Act III ayna-Z varyantlarını kullanır
+            var LP = new[]
+            {
+                P(-10, 5, -2, 5, 1, 2, -3, -1, 2, -4, 10, -4),                    // S-kıvrımı
+                P(-10, 6, 6, 6, 6, 2, -6, 2, -6, -2, 6, -2, 6, -6, -10, -6),      // Yılan
+                P(-10, -5, 3, -5, 3, 0, -3, 0, -3, 5, -10, 5),                    // U dönüşü
+                P(-10, 6, -3, 6, -3, -6, 4, -6, 4, 6, 10, 6),                     // Tarak
+                P(-10, 0, -4, 0, -4, 5, 2, 5, 2, -5, 8, -5, 8, 0, 10, 0),         // Çift viraj
+                P(-10, -6, 6, -6, 6, 6, -6, 6, -6, 0, 2, 0, 2, -3),               // Kale kuşatması
+            };
+            var LN = new[]
+            {
+                N(-7, 3.2f, -4, 6.8f, 1.5f, 4.2f, -3.5f, 1.2f, 0.5f, -1.2f, -5, -3, 4, -2.2f, 6, -5.8f),
+                N(-8, 4, -4, 4, 2, 4, -2, 0, 3, 0, 8.5f, 0, -4, -4, 2, -4),
+                N(0, -2.8f, 5.5f, -2.5f, -6, -2.8f, 0, 2.3f, -6, 2.5f, 1, 5.2f, -1, -7, 5.5f, 2),
+                N(-5.5f, 4, -1, 3, -1, -3, 1, -4.2f, 6.5f, 3, 6.5f, -3, 1, 0, -5.5f, -3),
+                N(-7, 2, -6.5f, -2.5f, -1, 2.8f, 0, 7, 4.5f, 2, 4.5f, -2.8f, -0.5f, -3, 10, -2.5f),
+                N(-2, -3.5f, 3.8f, -3.6f, 8.5f, 0, 3, 3, -3, 3, -8.5f, 3, -4.5f, -2, -8, -3.5f),
+            };
+
             var levels = new[]
             {
-                // B1 — Klasik S-kıvrımı
+                // ============ ACT I — Yeşiloluk (B1-B6) ============
                 MakeLevel(1, new[] {
                     W(1, S(voidSpawn, 5)), W(2, S(voidSpawn, 7)), W(3, S(voidSpawn, 9)),
-                    W(4, S(voidSpawn, 11)), W(5, S(voidSpawn, 14)) },
-                    P(-10, 5, -2, 5, 1, 2, -3, -1, 2, -4, 10, -4),
-                    N(-7, 3.2f, -4, 6.8f, 1.5f, 4.2f, -3.5f, 1.2f, 0.5f, -1.2f, -5, -3, 4, -2.2f, 6, -5.8f)),
-
-                // B2 — Yılan (üçlü yatay şerit)
+                    W(4, S(voidSpawn, 11)), W(5, S(voidSpawn, 14)) }, LP[0], LN[0]),
                 MakeLevel(2, new[] {
                     W(1, S(voidSpawn, 8)), W(2, S(voidSpawn, 10)), W(3, S(voidSpawn, 12, 0.6f)),
-                    W(4, S(voidSpawn, 14)), W(5, S(voidSpawn, 16, 0.6f)), W(6, S(voidSpawn, 18, 0.5f)) },
-                    P(-10, 6, 6, 6, 6, 2, -6, 2, -6, -2, 6, -2, 6, -6, -10, -6),
-                    N(-8, 4, -4, 4, 2, 4, -2, 0, 3, 0, 8.5f, 0, -4, -4, 2, -4)),
-
-                // B3 — U dönüşü
+                    W(4, S(voidSpawn, 14)), W(5, S(voidSpawn, 16, 0.6f)), W(6, S(voidSpawn, 18, 0.5f)) }, LP[1], LN[1]),
                 MakeLevel(3, new[] {
                     W(1, S(voidSpawn, 8), S(wolfrider, 3, 0.6f, 3f)), W(2, S(voidSpawn, 10), S(wolfrider, 4, 0.6f, 3f)),
                     W(3, S(wolfrider, 6, 0.5f)), W(4, S(voidSpawn, 12), S(wolfrider, 5, 0.5f, 2f)),
-                    W(5, S(voidSpawn, 14), S(wolfrider, 6, 0.5f, 2f)), W(6, S(wolfrider, 8, 0.4f), S(voidSpawn, 8, 0.8f, 4f)) },
-                    P(-10, -5, 3, -5, 3, 0, -3, 0, -3, 5, -10, 5),
-                    N(0, -2.8f, 5.5f, -2.5f, -6, -2.8f, 0, 2.3f, -6, 2.5f, 1, 5.2f, -1, -7, 5.5f, 2)),
-
-                // B4 — Tarak (Behemot bölümü)
+                    W(5, S(voidSpawn, 14), S(wolfrider, 6, 0.5f, 2f)), W(6, S(wolfrider, 8, 0.4f), S(voidSpawn, 8, 0.8f, 4f)) }, LP[2], LN[2]),
                 MakeLevel(4, new[] {
                     W(1, S(voidSpawn, 12)), W(2, S(voidSpawn, 14), S(wolfrider, 5, 0.5f, 3f)),
                     W(3, S(wolfrider, 8, 0.5f)), W(4, S(behemoth, 1, 1f, 1f), S(voidSpawn, 8, 0.8f, 3f)),
                     W(5, S(voidSpawn, 16), S(wolfrider, 6, 0.5f, 3f)), W(6, S(voidSpawn, 18, 0.6f), S(wolfrider, 8, 0.4f, 4f)),
-                    W(7, S(voidSpawn, 20, 0.5f), S(wolfrider, 10, 0.4f, 3f)) },
-                    P(-10, 6, -3, 6, -3, -6, 4, -6, 4, 6, 10, 6),
-                    N(-5.5f, 4, -1, 3, -1, -3, 1, -4.2f, 6.5f, 3, 6.5f, -3, 1, 0, -5.5f, -3)),
-
-                // B5 — Çift viraj (Kanpençe bölümü)
+                    W(7, S(voidSpawn, 20, 0.5f), S(wolfrider, 10, 0.4f, 3f)) }, LP[3], LN[3]),
                 MakeLevel(5, new[] {
                     W(1, S(bloodclaw, 4, 1.2f), S(voidSpawn, 10, 0.7f, 3f)), W(2, S(bloodclaw, 6, 1f)),
                     W(3, S(wolfrider, 8, 0.5f), S(bloodclaw, 4, 1f, 4f)), W(4, S(voidSpawn, 16, 0.6f), S(bloodclaw, 6, 1f, 3f)),
                     W(5, S(bloodclaw, 8, 0.9f)), W(6, S(behemoth, 1, 1f, 1f), S(bloodclaw, 4, 1f, 4f)),
-                    W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)) },
-                    P(-10, 0, -4, 0, -4, 5, 2, 5, 2, -5, 8, -5, 8, 0, 10, 0),
-                    N(-7, 2, -6.5f, -2.5f, -1, 2.8f, 0, 7, 4.5f, 2, 4.5f, -2.8f, -0.5f, -3, 10, -2.5f)),
-
-                // B6 — Kale kuşatması (Kefen Kralı finali — yol merkeze, "kapıya" iner)
+                    W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)) }, LP[4], LN[4]),
                 MakeLevel(6, new[] {
                     W(1, S(voidSpawn, 14, 0.6f)), W(2, S(wolfrider, 8, 0.5f), S(voidSpawn, 10, 0.7f, 3f)),
                     W(3, S(bloodclaw, 6, 1f), S(wolfrider, 6, 0.5f, 4f)), W(4, S(behemoth, 1, 1f, 1f), S(voidSpawn, 12, 0.6f, 3f)),
                     W(5, S(bloodclaw, 8, 0.9f), S(voidSpawn, 12, 0.6f, 4f)), W(6, S(wolfrider, 12, 0.4f)),
                     W(7, S(bloodclaw, 10, 0.8f), S(wolfrider, 8, 0.4f, 5f)),
-                    W(8, S(shroudKing, 1, 1f, 1f), S(voidSpawn, 15, 0.5f, 3f), S(bloodclaw, 6, 1f, 6f)) },
-                    P(-10, -6, 6, -6, 6, 6, -6, 6, -6, 0, 2, 0, 2, -3),
-                    N(-2, -3.5f, 3.8f, -3.6f, 8.5f, 0, 3, 3, -3, 3, -8.5f, 3, -4.5f, -2, -8, -3.5f)),
+                    W(8, S(shroudKing, 1, 1f, 1f), S(voidSpawn, 15, 0.5f, 3f), S(bloodclaw, 6, 1f, 6f)) }, LP[5], LN[5]),
+
+                // ============ ACT II — İkiz Kaleler (B7-B12): Gök Dehşetleri gelir! ============
+                MakeLevel(7, new[] {
+                    W(1, S(voidSpawn, 16, 0.6f)), W(2, S(skyTerror, 4, 0.8f), S(voidSpawn, 10, 0.7f, 3f)),
+                    W(3, S(skyTerror, 6, 0.7f)), W(4, S(bloodclaw, 6, 1f), S(skyTerror, 4, 0.8f, 4f)),
+                    W(5, S(voidSpawn, 18, 0.5f), S(wolfrider, 8, 0.4f, 3f)),
+                    W(6, S(skyTerror, 8, 0.6f), S(bloodclaw, 6, 1f, 4f)) }, MX(LP[0]), MX(LN[0])),
+                MakeLevel(8, new[] {
+                    W(1, S(bloodclaw, 6, 1f), S(voidSpawn, 12, 0.6f, 3f)), W(2, S(wolfrider, 10, 0.45f)),
+                    W(3, S(bloodclaw, 8, 0.9f)), W(4, S(skyTerror, 6, 0.7f), S(bloodclaw, 4, 1f, 4f)),
+                    W(5, S(bloodclaw, 10, 0.8f)), W(6, S(behemoth, 1, 1f, 1f), S(bloodclaw, 6, 1f, 3f)),
+                    W(7, S(voidSpawn, 20, 0.5f), S(skyTerror, 6, 0.7f, 4f)) }, MX(LP[1]), MX(LN[1])),
+                MakeLevel(9, new[] {
+                    W(1, S(voidSpawn, 16, 0.6f), S(wolfrider, 6, 0.5f, 3f)), W(2, S(bloodclaw, 8, 0.9f)),
+                    W(3, S(skyTerror, 8, 0.6f)), W(4, S(molgroth, 1, 1f, 1f), S(voidSpawn, 10, 0.7f, 3f)),
+                    W(5, S(bloodclaw, 8, 0.9f), S(skyTerror, 4, 0.8f, 4f)), W(6, S(wolfrider, 12, 0.4f)),
+                    W(7, S(bloodclaw, 10, 0.8f), S(skyTerror, 6, 0.7f, 5f)) }, MX(LP[2]), MX(LN[2])),
+                MakeLevel(10, new[] {
+                    W(1, S(bloodclaw, 8, 0.9f), S(wolfrider, 8, 0.45f, 3f)), W(2, S(skyTerror, 10, 0.55f)),
+                    W(3, S(behemoth, 1, 1f, 1f), S(bloodclaw, 6, 1f, 3f)), W(4, S(voidSpawn, 24, 0.4f)),
+                    W(5, S(bloodclaw, 10, 0.8f)), W(6, S(skyTerror, 8, 0.6f), S(bloodclaw, 8, 0.9f, 4f)),
+                    W(7, S(behemoth, 2, 2.5f, 1f), S(voidSpawn, 12, 0.6f, 4f)) }, MX(LP[3]), MX(LN[3])),
+                MakeLevel(11, new[] {
+                    W(1, S(wolfrider, 14, 0.4f)), W(2, S(bloodclaw, 12, 0.75f)),
+                    W(3, S(skyTerror, 10, 0.55f), S(voidSpawn, 14, 0.6f, 3f)),
+                    W(4, S(behemoth, 1, 1f, 1f), S(skyTerror, 6, 0.7f, 3f)),
+                    W(5, S(bloodclaw, 12, 0.75f), S(wolfrider, 10, 0.4f, 4f)),
+                    W(6, S(molgroth, 1, 1f, 1f), S(bloodclaw, 8, 0.9f, 4f)),
+                    W(7, S(voidSpawn, 30, 0.35f)) }, MX(LP[4]), MX(LN[4])),
+                MakeLevel(12, new[] {
+                    W(1, S(voidSpawn, 20, 0.5f)), W(2, S(bloodclaw, 10, 0.8f), S(skyTerror, 6, 0.7f, 4f)),
+                    W(3, S(wolfrider, 14, 0.4f)), W(4, S(behemoth, 2, 2.5f, 1f)),
+                    W(5, S(bloodclaw, 12, 0.75f)), W(6, S(skyTerror, 12, 0.5f)),
+                    W(7, S(malketh, 1, 1f, 1f), S(bloodclaw, 8, 0.9f, 4f), S(voidSpawn, 12, 0.6f, 7f)) }, MX(LP[5]), MX(LN[5])),
+
+                // ============ ACT III — Emberwaste (B13-B18): Kefen Kralları yürür ============
+                MakeLevel(13, new[] {
+                    W(1, S(voidSpawn, 24, 0.4f)), W(2, S(shroudKing, 1, 1f, 1f), S(voidSpawn, 12, 0.6f, 3f)),
+                    W(3, S(bloodclaw, 12, 0.75f)), W(4, S(shroudKing, 2, 3f, 1f)),
+                    W(5, S(skyTerror, 12, 0.5f)), W(6, S(shroudKing, 2, 3f, 1f), S(bloodclaw, 8, 0.9f, 5f)) }, MZ(LP[0]), MZ(LN[0])),
+                MakeLevel(14, new[] {
+                    W(1, S(voidSpawn, 28, 0.35f)), W(2, S(shroudKing, 2, 3f, 1f), S(wolfrider, 12, 0.4f, 4f)),
+                    W(3, S(bloodclaw, 14, 0.7f)), W(4, S(behemoth, 2, 2.5f, 1f), S(shroudKing, 1, 1f, 3f)),
+                    W(5, S(skyTerror, 14, 0.45f)), W(6, S(shroudKing, 3, 2.5f, 1f)) }, MZ(LP[1]), MZ(LN[1])),
+                MakeLevel(15, new[] {
+                    W(1, S(bloodclaw, 12, 0.75f), S(skyTerror, 8, 0.6f, 4f)), W(2, S(shroudKing, 2, 3f, 1f)),
+                    W(3, S(behemoth, 2, 2.5f, 1f)), W(4, S(morwen, 1, 1f, 1f), S(voidSpawn, 16, 0.55f, 3f)),
+                    W(5, S(shroudKing, 3, 2.5f, 1f)), W(6, S(bloodclaw, 16, 0.65f)) }, MZ(LP[2]), MZ(LN[2])),
+                MakeLevel(16, new[] {
+                    W(1, S(wolfrider, 18, 0.35f)), W(2, S(shroudKing, 3, 2.5f, 1f), S(skyTerror, 10, 0.55f, 4f)),
+                    W(3, S(bloodclaw, 16, 0.65f)), W(4, S(molgroth, 1, 1f, 1f), S(shroudKing, 2, 3f, 3f)),
+                    W(5, S(voidSpawn, 32, 0.3f)), W(6, S(behemoth, 3, 2f, 1f)) }, MZ(LP[3]), MZ(LN[3])),
+                MakeLevel(17, new[] {
+                    W(1, S(shroudKing, 4, 2f, 1f)), W(2, S(bloodclaw, 18, 0.6f), S(skyTerror, 12, 0.5f, 5f)),
+                    W(3, S(morwen, 1, 1f, 1f), S(bloodclaw, 8, 0.9f, 4f)),
+                    W(4, S(shroudKing, 3, 2.5f, 1f), S(wolfrider, 14, 0.4f, 4f)),
+                    W(5, S(behemoth, 2, 2.5f, 1f), S(molgroth, 1, 1f, 5f)),
+                    W(6, S(voidSpawn, 36, 0.28f)) }, MZ(LP[4]), MZ(LN[4])),
+                // B18 — FİNAL: Boşluk Kapısı — Zarok gelir
+                MakeLevel(18, new[] {
+                    W(1, S(voidSpawn, 24, 0.4f), S(bloodclaw, 10, 0.8f, 5f)), W(2, S(shroudKing, 3, 2.5f, 1f)),
+                    W(3, S(behemoth, 2, 2.5f, 1f), S(skyTerror, 12, 0.5f, 4f)),
+                    W(4, S(molgroth, 1, 1f, 1f), S(shroudKing, 2, 3f, 3f)),
+                    W(5, S(morwen, 1, 1f, 1f), S(bloodclaw, 12, 0.75f, 4f)),
+                    W(6, S(shroudKing, 4, 2f, 1f), S(wolfrider, 16, 0.35f, 5f)),
+                    W(7, S(zarok, 1, 1f, 2f), S(shroudKing, 2, 3f, 5f), S(voidSpawn, 20, 0.4f, 8f)) }, MZ(LP[5]), MZ(LN[5])),
             };
 
-            // Tema ataması: Act I dekorları (ağaç kümeleri + gözetleme kulesi) + zemin tonları
-            var act1Decor = new[]
-            {
-                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_trees.glb"),
-                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_watchtower.glb"),
-                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act3_rocks.glb"), // kaya çeşitliliği
-            };
+            // Tema ataması — act başına dekor seti + zemin tonu
+            GameObject Env(string n) =>
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/" + n + ".glb");
+            var act1Decor = new[] { Env("act1_trees"), Env("act1_watchtower"), Env("act3_rocks") };
+            var act2Decor = new[] { Env("act2_wall"), Env("act2_gate"), Env("act3_rocks") };      // taş kale
+            var act3Decor = new[] { Env("act3_rocks"), Env("act3_spire"), Env("act2_wall") };     // kül diyarı
             var groundTones = new[]
             {
+                // Act I — Yeşiloluk: canlı yeşiller
                 new Color(0.25f, 0.32f, 0.22f), new Color(0.23f, 0.34f, 0.20f),
                 new Color(0.27f, 0.33f, 0.19f), new Color(0.23f, 0.30f, 0.24f),
                 new Color(0.26f, 0.31f, 0.18f), new Color(0.21f, 0.27f, 0.22f),
+                // Act II — İkiz Kaleler: soğuk taş grileri
+                new Color(0.30f, 0.30f, 0.28f), new Color(0.28f, 0.29f, 0.30f),
+                new Color(0.26f, 0.27f, 0.25f), new Color(0.31f, 0.29f, 0.26f),
+                new Color(0.25f, 0.26f, 0.28f), new Color(0.23f, 0.24f, 0.25f),
+                // Act III — Emberwaste: yanık kül tonları
+                new Color(0.22f, 0.17f, 0.14f), new Color(0.20f, 0.15f, 0.13f),
+                new Color(0.24f, 0.16f, 0.12f), new Color(0.18f, 0.14f, 0.13f),
+                new Color(0.21f, 0.14f, 0.11f), new Color(0.16f, 0.11f, 0.10f),
             };
             for (int i = 0; i < levels.Length; i++)
             {
-                levels[i].decorPrefabs = act1Decor;
-                levels[i].decorCount = 9;
+                levels[i].decorPrefabs = i < 6 ? act1Decor : i < 12 ? act2Decor : act3Decor;
+                levels[i].decorCount = i < 6 ? 9 : 8;
                 levels[i].groundColor = groundTones[i];
                 EditorUtility.SetDirty(levels[i]);
             }
@@ -261,6 +343,8 @@ namespace Golgehalka.EditorTools
             audio.thunder = LoadClip("sfx_thunder");
             audio.quake = LoadClip("sfx_quake");
             audio.die = LoadClip("sfx_die");
+            audio.roar = LoadClip("sfx_roar");
+            audio.wing = LoadClip("sfx_wing");
             audio.battleMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
 
             // Ortam olayları: ejderha, yıldırım, ateş yağmuru, deprem
@@ -270,7 +354,7 @@ namespace Golgehalka.EditorTools
             {
                 var dragonRoot = new GameObject("Dragon");
                 var inst = Object.Instantiate(dragonModel, dragonRoot.transform);
-                inst.transform.localScale = Vector3.one * 1.5f;
+                inst.transform.localScale = Vector3.one * 2.6f; // heybetli boyut
                 string dragonPath = PrefabDir + "/Dragon.prefab";
                 AssetDatabase.DeleteAsset(dragonPath);
                 var dragonPrefab = PrefabUtility.SaveAsPrefabAsset(dragonRoot, dragonPath);
@@ -283,13 +367,14 @@ namespace Golgehalka.EditorTools
 
             EditorSceneManager.SaveScene(scene, ScenePath);
 
-            bool ok = wave.level != null && wave.path != null && hud.heroes.Length == 9 && hud.levels.Length == 6;
+            bool ok = wave.level != null && wave.path != null && hud.heroes.Length == 9 && hud.levels.Length == 18;
             EditorUtility.DisplayDialog("Gölgehalka",
                 ok
-                    ? "Act I hazır ve doğrulandı ✓\n\n9 kahraman · 5 düşman tipi · 6 bölüm · kule paneli\n\n" +
-                      "Play → bölüm seç → kahraman seç → platforma tıkla → kuleye dokunarak yükselt/sat."
+                    ? "BÜYÜK DÜNYA hazır ✓\n\n9 kahraman · 10 düşman tipi · 3 act · 18 bölüm\n\n" +
+                      "Act I: Yeşiloluk (1-6) · Act II: İkiz Kaleler (7-12, Gök Dehşetleri!)\n" +
+                      "Act III: Emberwaste (13-18) — B18'de Zarok bekliyor."
                     : "DİKKAT: bazı referanslar atanamadı! Console'a bak.",
-                ok ? "Başlıyoruz!" : "Tamam");
+                ok ? "Diyar savunulacak!" : "Tamam");
         }
 
         // ================= FABRİKALAR =================
@@ -420,7 +505,7 @@ namespace Golgehalka.EditorTools
             {
                 l.levelId = "act1_level" + no;
                 l.nameKey = "campaign.act1.title";
-                l.startingGold = no >= 4 ? 250 : 200;
+                l.startingGold = no <= 3 ? 200 : no <= 6 ? 250 : no <= 12 ? 280 : 320;
                 l.startingLives = 20;
                 l.waves = waves;
                 l.waypoints = wps;
@@ -440,6 +525,21 @@ namespace Golgehalka.EditorTools
         {
             var v = new Vector3[c.Length / 2];
             for (int i = 0; i < v.Length; i++) v[i] = new Vector3(c[i * 2], 0.15f, c[i * 2 + 1]);
+            return v;
+        }
+
+        /// Ayna varyantları — aynı düzen, farklı his (Act II/III harita çeşitliliği).
+        private static Vector3[] MX(Vector3[] a)
+        {
+            var v = new Vector3[a.Length];
+            for (int i = 0; i < a.Length; i++) v[i] = new Vector3(-a[i].x, a[i].y, a[i].z);
+            return v;
+        }
+
+        private static Vector3[] MZ(Vector3[] a)
+        {
+            var v = new Vector3[a.Length];
+            for (int i = 0; i < a.Length; i++) v[i] = new Vector3(a[i].x, a[i].y, -a[i].z);
             return v;
         }
 
@@ -500,8 +600,14 @@ namespace Golgehalka.EditorTools
             hud.levelButtons = new UnityEngine.UI.Button[levels.Length];
             for (int i = 0; i < levels.Length; i++)
             {
-                var (b, _) = UIButton(lvlRow, "Lvl" + (i + 1), "B" + (i + 1),
-                    new Vector2(40 + i * 120, 0), new Vector2(104, 60), btnBg, null);
+                var (b, lbl) = UIButton(lvlRow, "Lvl" + (i + 1), (i + 1).ToString(),
+                    new Vector2(24 + i * 102, 0), new Vector2(92, 56), btnBg, null);
+                lbl.fontSize = 26;
+                // Act renk şeridi: I yeşil, II gri-mavi, III kızıl
+                b.GetComponent<UnityEngine.UI.Image>().color = i < 6
+                    ? new Color(0.12f, 0.18f, 0.12f, 0.92f)
+                    : i < 12 ? new Color(0.13f, 0.15f, 0.20f, 0.92f)
+                             : new Color(0.20f, 0.10f, 0.08f, 0.92f);
                 hud.levelButtons[i] = b;
             }
 

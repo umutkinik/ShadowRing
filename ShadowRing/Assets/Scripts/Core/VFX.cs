@@ -73,5 +73,40 @@ namespace Golgehalka.Core
             ps.Emit(count);
             Object.Destroy(go, life + 0.35f);
         }
+
+        /// Sürekli iz — ejderha alevi, mermi kuyruğu vb. Ebeveyn yok olunca iz de gider.
+        public static GameObject Trail(Transform parent, Color color,
+            float rate = 40f, float life = 0.7f, float size = 0.18f)
+        {
+            var go = new GameObject("VFX_Trail");
+            go.transform.SetParent(parent, false);
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop();
+
+            var main = ps.main;
+            main.loop = true;
+            main.startLifetime = life;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.5f);
+            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.6f, size * 1.4f);
+            main.startColor = color;
+            main.simulationSpace = ParticleSystemSimulationSpace.World; // iz geride kalır
+
+            var em = ps.emission; em.rateOverTime = rate;
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.radius = 0.25f;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0), new GradientColorKey(Color.white, 1) },
+                new[] { new GradientAlphaKey(0.9f, 0), new GradientAlphaKey(0, 1) });
+            col.color = new ParticleSystem.MinMaxGradient(g);
+
+            go.GetComponent<ParticleSystemRenderer>().material = Mat();
+            ps.Play();
+            return go;
+        }
     }
 }
