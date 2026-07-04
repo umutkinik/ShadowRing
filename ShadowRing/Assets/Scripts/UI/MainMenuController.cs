@@ -33,7 +33,12 @@ namespace Golgehalka.UI
                     if (os == null) continue;
                     var tmpFont = TMP_FontAsset.CreateFontAsset(os);
                     if (tmpFont == null) continue;
-                    foreach (var t in GetComponentsInChildren<TMP_Text>(true)) t.font = tmpFont;
+                    foreach (var t in GetComponentsInChildren<TMP_Text>(true))
+                    {
+                        // Başlıklar Cinzel'de kalır — sadece buton/panel metinleri değişir
+                        if (t.name == "Title" || t.name == "Subtitle") continue;
+                        t.font = tmpFont;
+                    }
                     break;
                 }
                 catch { }

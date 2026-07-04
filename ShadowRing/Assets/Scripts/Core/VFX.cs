@@ -32,7 +32,16 @@ namespace Golgehalka.Core
             if (sharedMat != null) return sharedMat;
             sharedMat = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
             sharedMat.SetTexture("_BaseMap", Dot());
-            sharedMat.SetFloat("_Surface", 1f); // transparent
+            sharedMat.SetTexture("_MainTex", Dot());
+            // URP'de şeffaflık: _Surface tek başına yetmez, blend durumları elle kurulur
+            // (eksikti → partiküller opak KARE görünüyordu)
+            sharedMat.SetFloat("_Surface", 1f);
+            sharedMat.SetFloat("_Blend", 0f);
+            sharedMat.SetOverrideTag("RenderType", "Transparent");
+            sharedMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            sharedMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            sharedMat.SetInt("_ZWrite", 0);
+            sharedMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             sharedMat.renderQueue = 3000;
             return sharedMat;
         }

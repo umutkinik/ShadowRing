@@ -24,12 +24,12 @@ namespace Golgehalka.EditorTools
             camGO.tag = "MainCamera";
             var cam = camGO.AddComponent<Camera>();
             camGO.AddComponent<AudioListener>();
-            cam.fieldOfView = 42f;
-            cam.transform.position = new Vector3(0, 1.7f, -4.8f);
+            cam.fieldOfView = 45f;
+            cam.transform.position = new Vector3(0, 2.1f, -5.9f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0.015f, 0.012f, 0.025f);
             cam.GetUniversalAdditionalCameraData().renderPostProcessing = true;
-            cam.transform.LookAt(new Vector3(0, 1.5f, 0.8f));
+            cam.transform.LookAt(new Vector3(0, 1.4f, 1.2f));
 
             // Var olan post-fx profili menüde de kullan (vinyet)
             var profile = AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.VolumeProfile>(
@@ -71,18 +71,42 @@ namespace Golgehalka.EditorTools
             AssetDatabase.CreateAsset(fm, "Assets/Prefabs/Mat_MenuFloor.mat");
             floor.GetComponent<Renderer>().sharedMaterial = fm;
 
-            // Zarok — sahnenin efendisi
+            // Zarok — sahnenin efendisi: dev, merkez-geri, tehditkâr
             Transform zarokT = null;
             var zarokModel = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Characters/zarok.glb");
             if (zarokModel != null)
             {
                 var z = Object.Instantiate(zarokModel);
                 z.name = "Zarok";
-                z.transform.position = new Vector3(0, 0, 0.9f);
-                z.transform.rotation = Quaternion.Euler(0, 172, 0);
-                z.transform.localScale = Vector3.one * 1.25f;
+                z.transform.position = new Vector3(0, 0, 2.8f);
+                z.transform.rotation = Quaternion.Euler(0, 178, 0);
+                z.transform.localScale = Vector3.one * 2.1f;
                 zarokT = z.transform;
             }
+
+            // Kadro dizilimi: solda kahramanlar, sağda Boşluk ordusu — karşı karşıya
+            void Cast(string id, float x, float z, float yRot, float scale)
+            {
+                var m = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Characters/" + id + ".glb");
+                if (m == null) return;
+                var g = Object.Instantiate(m);
+                g.name = "Cast_" + id;
+                g.transform.position = new Vector3(x, 0, z);
+                g.transform.rotation = Quaternion.Euler(0, yRot, 0);
+                g.transform.localScale = Vector3.one * scale;
+            }
+            // Kahramanlar (kameraya dönük, hafif içe açılı)
+            Cast("kael", -4.9f, 1.6f, 128, 1.15f);
+            Cast("borin", -3.9f, 0.9f, 138, 1.1f);
+            Cast("faelyn", -3.0f, 1.5f, 130, 1.12f);
+            Cast("elwin", -2.1f, 0.8f, 145, 1.15f);
+            Cast("baldric", -1.3f, 1.6f, 140, 1.1f);
+            // Boşluk ordusu
+            Cast("bloodclaw", 1.3f, 1.5f, 222, 1.2f);
+            Cast("shroud_king", 2.1f, 0.8f, 218, 1.25f);
+            Cast("molgroth", 3.0f, 1.6f, 230, 1.5f);
+            Cast("morwen", 4.0f, 0.9f, 225, 1.35f);
+            Cast("stone_behemoth", 5.0f, 1.7f, 232, 1.6f);
 
             // --- UI ---
             new GameObject("EventSystem",
@@ -104,21 +128,46 @@ namespace Golgehalka.EditorTools
             Color btnBg = new Color(0.1f, 0.06f, 0.05f, 0.88f);
             Color gold = new Color(0.85f, 0.66f, 0.32f);
 
-            // Başlık — altın, geniş harf aralığı
-            var title = PrototypeSceneBuilder.UIText(t, "Title", "SHADOWRING", 128,
-                Vector2.zero, new Vector2(1400, 170), TMPro.TextAlignmentOptions.Center);
+            // Cinzel (Trajan akrabası, OFL) → TMP font asset'i — Diablo başlık ruhu
+            TMP_FontAsset cinzel = null;
+            var cinzelTtf = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/Cinzel.ttf");
+            if (cinzelTtf != null)
+            {
+                cinzel = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Cinzel SDF.asset");
+                if (cinzel == null)
+                {
+                    cinzel = TMP_FontAsset.CreateFontAsset(cinzelTtf);
+                    cinzel.name = "Cinzel SDF";
+                    AssetDatabase.CreateAsset(cinzel, "Assets/Fonts/Cinzel SDF.asset");
+                    if (cinzel.material != null) AssetDatabase.AddObjectToAsset(cinzel.material, cinzel);
+                    if (cinzel.atlasTexture != null) AssetDatabase.AddObjectToAsset(cinzel.atlasTexture, cinzel);
+                    AssetDatabase.SaveAssets();
+                }
+            }
+
+            // Başlık — altın degrade + koyu kontur (Diablo tarzı)
+            var title = PrototypeSceneBuilder.UIText(t, "Title", "SHADOWRING", 132,
+                Vector2.zero, new Vector2(1500, 180), TMPro.TextAlignmentOptions.Center);
             title.rectTransform.anchorMin = title.rectTransform.anchorMax = new Vector2(0.5f, 1f);
             title.rectTransform.pivot = new Vector2(0.5f, 1f);
-            title.rectTransform.anchoredPosition = new Vector2(0, -60);
-            title.color = gold;
-            title.characterSpacing = 14f;
+            title.rectTransform.anchoredPosition = new Vector2(0, -52);
+            title.characterSpacing = 10f;
+            if (cinzel != null) title.font = cinzel;
+            title.enableVertexGradient = true;
+            title.colorGradient = new VertexGradient(
+                new Color(1f, 0.88f, 0.55f), new Color(1f, 0.88f, 0.55f),   // üst: açık altın
+                new Color(0.55f, 0.36f, 0.12f), new Color(0.55f, 0.36f, 0.12f)); // alt: bronz
+            title.outlineWidth = 0.22f;
+            title.outlineColor = new Color32(30, 15, 5, 255);
 
-            var sub = PrototypeSceneBuilder.UIText(t, "Subtitle", "The Sundered Realm", 34,
+            var sub = PrototypeSceneBuilder.UIText(t, "Subtitle", "The Sundered Realm", 36,
                 Vector2.zero, new Vector2(900, 60), TMPro.TextAlignmentOptions.Center);
             sub.rectTransform.anchorMin = sub.rectTransform.anchorMax = new Vector2(0.5f, 1f);
             sub.rectTransform.pivot = new Vector2(0.5f, 1f);
-            sub.rectTransform.anchoredPosition = new Vector2(0, -220);
-            sub.color = new Color(0.65f, 0.58f, 0.5f);
+            sub.rectTransform.anchoredPosition = new Vector2(0, -224);
+            sub.color = new Color(0.72f, 0.62f, 0.48f);
+            sub.characterSpacing = 6f;
+            if (cinzel != null) sub.font = cinzel;
 
             // Buton sütunu (alt-orta)
             var (playB, playLbl) = PrototypeSceneBuilder.UIButton(t, "Play", "Play",
