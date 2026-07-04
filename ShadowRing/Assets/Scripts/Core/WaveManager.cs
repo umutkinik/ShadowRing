@@ -23,11 +23,22 @@ namespace Golgehalka.Core
         private void OnEnable() => Enemy.OnAnyEnemyDied += HandleEnemyGone;
         private void OnDisable() => Enemy.OnAnyEnemyDied -= HandleEnemyGone;
 
+        /// Bölüm ekonomisini uygula: başlangıç altını + can (LevelDefinition'dan).
+        private void Start() => ApplyLevelStart();
+
+        private void ApplyLevelStart()
+        {
+            if (level == null) return;
+            EconomyManager.Instance.SetGold(level.startingGold);
+            GameManager.Instance.ResetLives(level.startingLives);
+        }
+
         /// Bölüm seçici — yalnızca ilk dalga başlamadan önce değiştirilebilir.
         public void SetLevel(LevelDefinition newLevel)
         {
             if (CurrentWave > 0 || GameManager.Instance.State == GameState.WaveActive) return;
             level = newLevel;
+            ApplyLevelStart(); // yeni bölümün altın/can değerleri anında yansır
         }
 
         /// UI'daki "Sonraki Dalga" butonu çağırır (hud.next_wave).

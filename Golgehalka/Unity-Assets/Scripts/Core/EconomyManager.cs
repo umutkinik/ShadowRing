@@ -21,6 +21,13 @@ namespace Golgehalka.Core
             Gold = startingGold;
         }
 
+        /// Bölüm başlangıcı — LevelDefinition.startingGold uygulanır.
+        public void SetGold(int amount)
+        {
+            Gold = amount;
+            OnGoldChanged?.Invoke(Gold);
+        }
+
         public void AddGold(int amount)
         {
             Gold += amount;

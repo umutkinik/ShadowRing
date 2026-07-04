@@ -1,6 +1,7 @@
 using Golgehalka.Core;
 using Golgehalka.Data;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Golgehalka.UI
 {
@@ -35,7 +36,9 @@ namespace Golgehalka.UI
             if (state == GameState.Victory) { DrawVictory(); return; }
             if (state == GameState.Defeat)
             {
-                GUI.Box(new Rect(Screen.width / 2f - 160, Screen.height / 2f - 40, 320, 80), "YENİLGİ");
+                GUI.Box(new Rect(Screen.width / 2f - 160, Screen.height / 2f - 70, 320, 80), "YENİLGİ");
+                if (GUI.Button(new Rect(Screen.width / 2f - 120, Screen.height / 2f + 20, 240, 56), "Tekrar Dene"))
+                    ReloadScene();
                 return;
             }
 
@@ -90,9 +93,14 @@ namespace Golgehalka.UI
             }
 
             string starText = new string('★', stars) + new string('☆', 3 - stars);
-            GUI.Box(new Rect(Screen.width / 2f - 200, Screen.height / 2f - 60, 400, 120),
+            GUI.Box(new Rect(Screen.width / 2f - 200, Screen.height / 2f - 80, 400, 120),
                 "ZAFER!\n" + starText + "   +20 parça");
+            if (GUI.Button(new Rect(Screen.width / 2f - 120, Screen.height / 2f + 50, 240, 56), "Yeni Oyun"))
+                ReloadScene();
         }
+
+        private static void ReloadScene() =>
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         /// balance-v1.md: 3★ = hiç can kaybı yok, 2★ ≥ 15 can, 1★ = tamamlama.
         private static int CalculateStars(int livesLeft)

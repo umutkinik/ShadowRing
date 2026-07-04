@@ -153,8 +153,10 @@ namespace Golgehalka.EditorTools
                 go =>
                 {
                     go.AddComponent<Enemy>();
+                    // Ayak hizası: kapsül merkezi yolda y=0.1'de durur; -0.13 lokal ofset
+                    // model ayaklarını zemin üstüne (≈y=0.02) oturtur (-1 gömüyordu!)
                     if (AttachModel(go, ModelDir + "/" + id + ".glb",
-                        new Vector3(0, -1f, 0), Vector3.one * (modelScale / 0.6f)))
+                        new Vector3(0, -0.13f, 0), Vector3.one * (modelScale / 0.6f)))
                         go.GetComponent<MeshRenderer>().enabled = false;
                 });
 

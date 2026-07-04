@@ -38,6 +38,13 @@ namespace Golgehalka.Core
                 Time.timeScale = 1f; // sonuç ekranı normal hızda
         }
 
+        /// Bölüm başlangıcı — LevelDefinition.startingLives uygulanır.
+        public void ResetLives(int amount)
+        {
+            Lives = amount;
+            OnLivesChanged?.Invoke(Lives);
+        }
+
         /// Düşman yolu bitirdiğinde çağrılır (leak).
         public void LoseLife(int amount = 1)
         {
