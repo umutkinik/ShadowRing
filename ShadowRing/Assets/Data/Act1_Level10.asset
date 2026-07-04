@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784d610829d14407eb4df1a340f573c1, type: 3}
+  m_Name: Act1_Level10
+  m_EditorClassIdentifier: Assembly-CSharp::Golgehalka.Data.LevelDefinition
+  levelId: act1_level10
+  nameKey: campaign.act1.title
+  startingGold: 280
+  startingLives: 20
+  waves:
+  - entries:
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 8
+      interval: 0.9
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: 3070e4d57851747e1b1f0ae5a8b7d898, type: 2}
+      count: 8
+      interval: 0.45
+      startDelay: 3
+    rewardGold: 30
+  - entries:
+    - enemy: {fileID: 11400000, guid: ec879fdf4ebd346ef8c1aa3d60f7e684, type: 2}
+      count: 10
+      interval: 0.55
+      startDelay: 0.5
+    rewardGold: 35
+  - entries:
+    - enemy: {fileID: 11400000, guid: 303a434b2490143b8ab5de4230f80b67, type: 2}
+      count: 1
+      interval: 1
+      startDelay: 1
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 6
+      interval: 1
+      startDelay: 3
+    rewardGold: 40
+  - entries:
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 24
+      interval: 0.4
+      startDelay: 0.5
+    rewardGold: 45
+  - entries:
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 10
+      interval: 0.8
+      startDelay: 0.5
+    rewardGold: 50
+  - entries:
+    - enemy: {fileID: 11400000, guid: ec879fdf4ebd346ef8c1aa3d60f7e684, type: 2}
+      count: 8
+      interval: 0.6
+      startDelay: 0.5
+    - enemy: {fileID: 11400000, guid: 4c2731fca59724b2a918d630603f9018, type: 2}
+      count: 8
+      interval: 0.9
+      startDelay: 4
+    rewardGold: 55
+  - entries:
+    - enemy: {fileID: 11400000, guid: 303a434b2490143b8ab5de4230f80b67, type: 2}
+      count: 2
+      interval: 2.5
+      startDelay: 1
+    - enemy: {fileID: 11400000, guid: e79af21b25cce4f39bb5dfcb2fa25749, type: 2}
+      count: 12
+      interval: 0.6
+      startDelay: 4
+    rewardGold: 60
+  waypoints:
+  - {x: 10, y: 0.1, z: 6}
+  - {x: 3, y: 0.1, z: 6}
+  - {x: 3, y: 0.1, z: -6}
+  - {x: -4, y: 0.1, z: -6}
+  - {x: -4, y: 0.1, z: 6}
+  - {x: -10, y: 0.1, z: 6}
+  nodePositions:
+  - {x: 5.5, y: 0.15, z: 4}
+  - {x: 1, y: 0.15, z: 3}
+  - {x: 1, y: 0.15, z: -3}
+  - {x: -1, y: 0.15, z: -4.2}
+  - {x: -6.5, y: 0.15, z: 3}
+  - {x: -6.5, y: 0.15, z: -3}
+  - {x: -1, y: 0.15, z: 0}
+  - {x: 5.5, y: 0.15, z: -3}
+  decorPrefabs:
+  - {fileID: -8098169881513260187, guid: 17c61f69afb784bf28015a042c300ded, type: 3}
+  - {fileID: -8098169881513260187, guid: c4e512ae6229540e2909a75528bfbae3, type: 3}
+  - {fileID: -8098169881513260187, guid: a59f04d41e7644280996fd9324376bab, type: 3}
+  decorCount: 8
+  groundColor: {r: 0.31, g: 0.29, b: 0.26, a: 1}

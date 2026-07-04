@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c20ed12700f4948cfb4576cc8b935b81, type: 3}
+  m_Name: Molgroth
+  m_EditorClassIdentifier: Assembly-CSharp::Golgehalka.Data.EnemyDefinition
+  enemyId: molgroth
+  nameKey: enemy.molgroth.name
+  maxHealth: 2600
+  armor: 0.25
+  moveSpeed: 1.2
+  isFlying: 0
+  isBoss: 1
+  goldReward: 150
+  livesCost: 10
+  prefab: {fileID: 8425878600514429476, guid: f25057d991ddc45b5b615e02025decc6, type: 3}

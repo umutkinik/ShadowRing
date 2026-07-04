@@ -16,7 +16,8 @@ namespace Golgehalka.UI
         public Button creditsButton;
         public GameObject creditsPanel;
         public Button creditsCloseButton;
-        public Transform zarok;              // yavaş vitrin dönüşü
+        public Transform zarok;              // yavaş vitrin dönüşü (3D mod)
+        public bool useKeyArt;               // tam ekran illüstrasyon modu
 
         private static readonly string[] Locales = { "en", "de", "ru", "zh-Hans", "hi", "ar", "tr" };
 
@@ -56,7 +57,7 @@ namespace Golgehalka.UI
             creditsCloseButton.onClick.AddListener(() => creditsPanel.SetActive(false));
             creditsPanel.SetActive(false);
 
-            SpawnEmbers();
+            if (!useKeyArt) SpawnEmbers(); // key-art'ta közler görselin içinde
         }
 
         private void Update()

@@ -641,6 +641,18 @@ namespace Golgehalka.EditorTools
                 out _, out var dBtn, btnBg);
             hud.defeatButton = dBtn;
 
+            // --- Diablo-vari giydirme: rünik çerçeveler (varsa) ---
+            var btnFrame = UISprite("btn_frame", new Vector4(260, 220, 260, 220));
+            var panelFrame = UISprite("panel_frame", new Vector4(340, 300, 340, 300));
+            AddFrame(top, btnFrame);
+            AddFrame(bottom, btnFrame);
+            AddFrame(nextBtn.GetComponent<RectTransform>(), btnFrame);
+            foreach (var hb in hud.heroButtons) AddFrame(hb.GetComponent<RectTransform>(), btnFrame);
+            foreach (var sb2 in hud.speedButtons) AddFrame(sb2.GetComponent<RectTransform>(), btnFrame);
+            AddFrame(hud.langButton.GetComponent<RectTransform>(), btnFrame);
+            AddFrame((RectTransform)hud.victoryPanel.transform, panelFrame);
+            AddFrame((RectTransform)hud.defeatPanel.transform, panelFrame);
+
             // --- Kule yükseltme/satma paneli (sağ orta) ---
             var tp = UIPanel(t, "TowerPanel", new Vector2(1, 0.5f), new Vector2(1, 0.5f),
                 new Vector2(1, 0.5f), new Vector2(-16, 0), new Vector2(360, 420),
@@ -654,6 +666,7 @@ namespace Golgehalka.EditorTools
             hud.sellButton = sellBtn; hud.sellLabel = sellLbl;
             var (closeBtn, _) = UIButton(tp, "Close", "Kapat", new Vector2(20, -162), new Vector2(320, 48), btnBg, "ui.close");
             hud.towerCloseButton = closeBtn;
+            AddFrame(tp, panelFrame);
 
             return hud;
         }
@@ -763,6 +776,42 @@ namespace Golgehalka.EditorTools
 
         private static AudioClip LoadClip(string name) =>
             AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name + ".wav");
+
+        /// UI sprite yükle — importer'ı Sprite'a çevirir, 9-slice kenarlarını ayarlar.
+        internal static Sprite UISprite(string name, Vector4 border)
+        {
+            string path = "Assets/UI/" + name + ".png";
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) return null;
+            if (importer.textureType != TextureImporterType.Sprite || importer.spriteBorder != border)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.spriteBorder = border;
+                importer.mipmapEnabled = false;
+                importer.maxTextureSize = 2048;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        /// Hedefin üstüne 9-slice süslü çerçeve bindirir (tıklamayı engellemez).
+        internal static void AddFrame(RectTransform target, Sprite frame)
+        {
+            if (frame == null || target == null) return;
+            var go = new GameObject("Frame", typeof(UnityEngine.UI.Image));
+            go.transform.SetParent(target, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            var img = go.GetComponent<UnityEngine.UI.Image>();
+            img.sprite = frame;
+            img.type = UnityEngine.UI.Image.Type.Sliced;
+            img.raycastTarget = false;
+            // Küçük öğelerde süslü kenarlar orantılı incelsin
+            float w = Mathf.Abs(target.sizeDelta.x) < 1 ? 400 : Mathf.Abs(target.sizeDelta.x);
+            img.pixelsPerUnitMultiplier = w < 150 ? 5f : w < 420 ? 3f : 1.2f;
+        }
 
         internal static void EnsureFolder(string parent, string name)
         {

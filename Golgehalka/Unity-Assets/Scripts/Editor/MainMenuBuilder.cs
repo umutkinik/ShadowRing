@@ -42,7 +42,11 @@ namespace Golgehalka.EditorTools
                 vol.profile = profile;
             }
 
-            // Loş mor dolgu ışığı + turuncu "şömine" + mor rim
+            // KEY-ART MODU: art/ui/menu_bg.png varsa 3D vitrin yerine tam ekran illüstrasyon
+            var bgSprite = PrototypeSceneBuilder.UISprite("menu_bg", Vector4.zero);
+            bool keyArt = bgSprite != null;
+
+            // Loş mor dolgu ışığı + turuncu "şömine" + mor rim (yalnız 3D modda)
             var fill = new GameObject("Fill Light").AddComponent<Light>();
             fill.type = UnityEngine.LightType.Directional;
             fill.color = new Color(0.45f, 0.4f, 0.65f);
@@ -95,18 +99,21 @@ namespace Golgehalka.EditorTools
                 g.transform.rotation = Quaternion.Euler(0, yRot, 0);
                 g.transform.localScale = Vector3.one * scale;
             }
-            // Kahramanlar (kameraya dönük, hafif içe açılı)
-            Cast("kael", -4.9f, 1.6f, 128, 1.15f);
-            Cast("borin", -3.9f, 0.9f, 138, 1.1f);
-            Cast("faelyn", -3.0f, 1.5f, 130, 1.12f);
-            Cast("elwin", -2.1f, 0.8f, 145, 1.15f);
-            Cast("baldric", -1.3f, 1.6f, 140, 1.1f);
-            // Boşluk ordusu
-            Cast("bloodclaw", 1.3f, 1.5f, 222, 1.2f);
-            Cast("shroud_king", 2.1f, 0.8f, 218, 1.25f);
-            Cast("molgroth", 3.0f, 1.6f, 230, 1.5f);
-            Cast("morwen", 4.0f, 0.9f, 225, 1.35f);
-            Cast("stone_behemoth", 5.0f, 1.7f, 232, 1.6f);
+            if (!keyArt)
+            {
+                // Kahramanlar (kameraya dönük, hafif içe açılı)
+                Cast("kael", -4.9f, 1.6f, 128, 1.15f);
+                Cast("borin", -3.9f, 0.9f, 138, 1.1f);
+                Cast("faelyn", -3.0f, 1.5f, 130, 1.12f);
+                Cast("elwin", -2.1f, 0.8f, 145, 1.15f);
+                Cast("baldric", -1.3f, 1.6f, 140, 1.1f);
+                // Boşluk ordusu
+                Cast("bloodclaw", 1.3f, 1.5f, 222, 1.2f);
+                Cast("shroud_king", 2.1f, 0.8f, 218, 1.25f);
+                Cast("molgroth", 3.0f, 1.6f, 230, 1.5f);
+                Cast("morwen", 4.0f, 0.9f, 225, 1.35f);
+                Cast("stone_behemoth", 5.0f, 1.7f, 232, 1.6f);
+            }
 
             // --- UI ---
             new GameObject("EventSystem",
@@ -124,9 +131,26 @@ namespace Golgehalka.EditorTools
 
             var ctrl = canvasGO.AddComponent<MainMenuController>();
             ctrl.zarok = zarokT;
+            ctrl.useKeyArt = keyArt;
             var t = canvasGO.transform;
-            Color btnBg = new Color(0.1f, 0.06f, 0.05f, 0.88f);
+            Color btnBg = new Color(0.08f, 0.05f, 0.04f, 0.72f);
             Color gold = new Color(0.85f, 0.66f, 0.32f);
+
+            // Tam ekran key-art arka planı (her en-boy oranını kaplar)
+            if (keyArt)
+            {
+                var bgGO = new GameObject("KeyArt",
+                    typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.AspectRatioFitter));
+                bgGO.transform.SetParent(t, false);
+                bgGO.transform.SetAsFirstSibling();
+                var brt = bgGO.GetComponent<RectTransform>();
+                brt.anchorMin = new Vector2(0.5f, 0.5f);
+                brt.anchorMax = new Vector2(0.5f, 0.5f);
+                bgGO.GetComponent<UnityEngine.UI.Image>().sprite = bgSprite;
+                var arf = bgGO.GetComponent<UnityEngine.UI.AspectRatioFitter>();
+                arf.aspectMode = UnityEngine.UI.AspectRatioFitter.AspectMode.EnvelopeParent;
+                arf.aspectRatio = 2752f / 1536f;
+            }
 
             // Cinzel (Trajan akrabası, OFL) → TMP font asset'i — Diablo başlık ruhu
             TMP_FontAsset cinzel = null;
@@ -169,6 +193,13 @@ namespace Golgehalka.EditorTools
             sub.characterSpacing = 6f;
             if (cinzel != null) sub.font = cinzel;
 
+            // Key-art başlığı görselin içinde — TMP başlıkları gizle
+            if (keyArt)
+            {
+                title.gameObject.SetActive(false);
+                sub.gameObject.SetActive(false);
+            }
+
             // Buton sütunu (alt-orta)
             var (playB, playLbl) = PrototypeSceneBuilder.UIButton(t, "Play", "Play",
                 Vector2.zero, new Vector2(430, 92), btnBg, "menu.play");
@@ -186,6 +217,12 @@ namespace Golgehalka.EditorTools
 
             ctrl.playButton = playB;
             ctrl.creditsButton = credB;
+
+            // Rünik çerçeveler
+            var btnFrame = PrototypeSceneBuilder.UISprite("btn_frame", new Vector4(260, 220, 260, 220));
+            PrototypeSceneBuilder.AddFrame(playB.GetComponent<RectTransform>(), btnFrame);
+            PrototypeSceneBuilder.AddFrame(langB.GetComponent<RectTransform>(), btnFrame);
+            PrototypeSceneBuilder.AddFrame(credB.GetComponent<RectTransform>(), btnFrame);
 
             // Krediler paneli
             var panel = PrototypeSceneBuilder.UIPanel(t, "CreditsPanel",
@@ -208,6 +245,8 @@ namespace Golgehalka.EditorTools
             closeRt.anchoredPosition = new Vector2(0, 28);
             ctrl.creditsPanel = panel.gameObject;
             ctrl.creditsCloseButton = closeB;
+            var panelFrame = PrototypeSceneBuilder.UISprite("panel_frame", new Vector4(340, 300, 340, 300));
+            PrototypeSceneBuilder.AddFrame(panel, panelFrame);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
 
