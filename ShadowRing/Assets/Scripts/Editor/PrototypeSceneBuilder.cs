@@ -33,6 +33,12 @@ namespace Golgehalka.EditorTools
             EnsureFolder("Assets", "Prefabs");
             EnsureFolder("Assets", "Scenes");
 
+            // Rigli GLB'ler Legacy animasyon olarak import edilmeli
+            // (Animation bileşeni ancak böyle oluşur — kod bunu bekliyor)
+            if (System.IO.Directory.Exists("Assets/Models/Rigged"))
+                foreach (string glb in System.IO.Directory.GetFiles("Assets/Models/Rigged", "*.glb"))
+                    EnsureLegacyAnimation(glb.Replace('\\', '/'));
+
             // ---- 1) ORTAK PREFABLAR ----
             GameObject projectilePrefab = MakePrimitivePrefab(
                 PrimitiveType.Sphere, "Projectile", 0.25f, new Color(1f, 0.85f, 0.3f),
@@ -462,9 +468,11 @@ namespace Golgehalka.EditorTools
                 tierGOs[i] = tierGO;
             }
 
-            // Kahraman modeli platformun üstünde
+            // Kahraman modeli platformun üstünde — rigli idle varyantı öncelikli
             GameObject heroGO;
-            var heroModel = AssetDatabase.LoadAssetAtPath<GameObject>(ModelDir + "/" + id + ".glb");
+            var heroModel = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Rigged/" + id + "_idle.glb");
+            if (heroModel == null)
+                heroModel = AssetDatabase.LoadAssetAtPath<GameObject>(ModelDir + "/" + id + ".glb");
             if (heroModel != null)
             {
                 heroGO = Object.Instantiate(heroModel, go.transform);
@@ -479,10 +487,16 @@ namespace Golgehalka.EditorTools
             heroGO.name = "HeroModel";
             heroGO.transform.localPosition = new Vector3(0, 0.32f, 0);
 
+            // Saldırı klibi (Legacy) — attack.glb içinden çekilir
+            AnimationClip attackClip = null;
+            foreach (var a in AssetDatabase.LoadAllAssetsAtPath("Assets/Models/Rigged/" + id + "_attack.glb"))
+                if (a is AnimationClip c && !c.name.Contains("__preview")) { attackClip = c; break; }
+
             // Serileştirilmiş alanları bağla
             var so = new SerializedObject(tower);
             so.FindProperty("firePoint").objectReferenceValue = fire.transform;
             so.FindProperty("heroModel").objectReferenceValue = heroGO.transform;
+            so.FindProperty("attackClip").objectReferenceValue = attackClip;
             var arr = so.FindProperty("tierVisuals");
             arr.arraySize = 3;
             for (int i = 0; i < 3; i++)
@@ -767,6 +781,21 @@ namespace Golgehalka.EditorTools
 
         private static AudioClip LoadClip(string name) =>
             AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name + ".wav");
+
+        /// glTFast importer'ında animasyon yöntemini Legacy'e çevirir (enum: 0=None, 1=Legacy, 2=Mecanim).
+        internal static void EnsureLegacyAnimation(string path)
+        {
+            var importer = AssetImporter.GetAtPath(path);
+            if (importer == null) return;
+            var so = new SerializedObject(importer);
+            var prop = so.FindProperty("m_AnimationMethod") ?? so.FindProperty("animationMethod");
+            if (prop != null && prop.propertyType == SerializedPropertyType.Enum && prop.intValue != 1)
+            {
+                prop.intValue = 1; // Legacy
+                so.ApplyModifiedPropertiesWithoutUndo();
+                importer.SaveAndReimport();
+            }
+        }
 
         /// UI sprite yükle — importer'ı Sprite'a çevirir, 9-slice kenarlarını ayarlar.
         internal static Sprite UISprite(string name, Vector4 border)

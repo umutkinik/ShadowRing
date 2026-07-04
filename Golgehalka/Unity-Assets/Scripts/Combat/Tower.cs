@@ -15,6 +15,10 @@ namespace Golgehalka.Combat
         [SerializeField] private TargetPriority priority = TargetPriority.First;
         [SerializeField] private GameObject[] tierVisuals; // K1/K2/K3 platform modelleri
         [SerializeField] private Transform heroModel;      // atışta hedefe döner
+        [SerializeField] private AnimationClip attackClip; // Meshy saldırı klibi (Legacy)
+
+        private Animation heroAnim;      // idle döngüsü + saldırı geçişi
+        private string idleStateName;
 
         private void OnEnable() => Active.Add(this);
         private void OnDisable() => Active.Remove(this);
@@ -37,6 +41,25 @@ namespace Golgehalka.Combat
             TierIndex = 0;
             TotalSpent = hero.tiers[0].cost;
             ApplyTierVisual();
+            SetupHeroAnimation();
+        }
+
+        /// Rigli kahraman: idle döngüde oynar, saldırı klibi kayda eklenir.
+        private void SetupHeroAnimation()
+        {
+            heroAnim = GetComponentInChildren<Animation>();
+            if (heroAnim == null || heroAnim.GetClipCount() == 0) { heroAnim = null; return; }
+            foreach (AnimationState st in heroAnim)
+            {
+                idleStateName = st.name;
+                st.wrapMode = WrapMode.Loop;
+                break;
+            }
+            heroAnim.Play(idleStateName);
+            if (attackClip != null && attackClip.legacy)
+                heroAnim.AddClip(attackClip, "attack");
+            else
+                attackClip = null; // Mecanim geldiyse punch'a düş
         }
 
         public bool CanUpgrade => TierIndex < Hero.tiers.Length - 1;
@@ -117,15 +140,24 @@ namespace Golgehalka.Combat
 
         private void Fire(Enemy target)
         {
-            // Kahraman hedefe döner + kısa "atış tepkisi" (scale punch)
+            // Kahraman hedefe döner; rigliyse saldırı klibi, değilse scale punch
             if (heroModel != null)
             {
                 Vector3 dir = target.transform.position - transform.position;
                 dir.y = 0;
                 if (dir.sqrMagnitude > 0.01f)
                     heroModel.rotation = Quaternion.LookRotation(dir);
-                StopAllCoroutines();
-                StartCoroutine(AttackPunch());
+
+                if (heroAnim != null && attackClip != null)
+                {
+                    heroAnim.CrossFade("attack", 0.08f);
+                    heroAnim.CrossFadeQueued(idleStateName, 0.15f);
+                }
+                else
+                {
+                    StopAllCoroutines();
+                    StartCoroutine(AttackPunch());
+                }
             }
 
             var go = Instantiate(Hero.projectilePrefab,
