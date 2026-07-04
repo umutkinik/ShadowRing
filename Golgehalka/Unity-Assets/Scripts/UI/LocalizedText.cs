@@ -9,7 +9,7 @@ namespace Golgehalka.UI
     [RequireComponent(typeof(TMP_Text))]
     public class LocalizedText : MonoBehaviour
     {
-        [SerializeField] private string key;
+        public string key;   // lokalizasyon anahtarı (editor araçları doğrudan atar)
 
         private TMP_Text label;
         private TextAlignmentOptions originalAlignment;
@@ -29,6 +29,7 @@ namespace Golgehalka.UI
         private void OnDisable() => LocalizationManager.OnLocaleChanged -= Refresh;
 
         public void SetKey(string newKey) { key = newKey; Refresh(); }
+        public void ForceRefresh() => Refresh();
 
         private void Refresh()
         {

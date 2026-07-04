@@ -126,11 +126,7 @@ namespace Golgehalka.EditorTools
             bso.FindProperty("towerBasePrefab").objectReferenceValue = borin.towerPrefab;
             bso.ApplyModifiedPropertiesWithoutUndo();
 
-            var hud = mgr.AddComponent<DebugHUD>();
-            hud.waveManager = wave;
-            hud.buildManager = build;
-            hud.heroes = new[] { borin, faelyn, elwin };
-            hud.levels = levels;
+            var hud = BuildHUD(wave, build, new[] { borin, faelyn, elwin }, levels);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
 
@@ -214,6 +210,183 @@ namespace Golgehalka.EditorTools
                 l.startingLives = 20;
                 l.waves = waves;
             });
+
+        // ================= HUD (Canvas + TMP + lokalizasyon) =================
+
+        private static MatchHUD BuildHUD(
+            WaveManager wave, BuildManager build, HeroDefinition[] heroes, LevelDefinition[] levels)
+        {
+            new GameObject("EventSystem",
+                typeof(UnityEngine.EventSystems.EventSystem),
+                typeof(UnityEngine.EventSystems.StandaloneInputModule));
+
+            var canvasGO = new GameObject("HUD_Canvas",
+                typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));
+            var canvas = canvasGO.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var scaler = canvasGO.GetComponent<UnityEngine.UI.CanvasScaler>();
+            scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            var hud = canvasGO.AddComponent<MatchHUD>();
+            hud.waveManager = wave;
+            hud.buildManager = build;
+            hud.heroes = heroes;
+            hud.levels = levels;
+
+            var t = canvasGO.transform;
+            Color barBg = new Color(0.05f, 0.05f, 0.09f, 0.55f);
+            Color btnBg = new Color(0.16f, 0.15f, 0.22f, 0.95f);
+
+            // --- Üst bar ---
+            var top = UIPanel(t, "TopBar", new Vector2(0, 1), new Vector2(1, 1),
+                new Vector2(0.5f, 1), Vector2.zero, new Vector2(0, 84), barBg);
+            hud.goldText = UIText(top, "Gold", "Altın: 0", 38, new Vector2(40, 0), new Vector2(360, 70), TMPro.TextAlignmentOptions.Left);
+            hud.livesText = UIText(top, "Lives", "Can: 20", 38, new Vector2(440, 0), new Vector2(300, 70), TMPro.TextAlignmentOptions.Left);
+            hud.waveText = UIText(top, "Wave", "Dalga: 0/0", 38, new Vector2(780, 0), new Vector2(360, 70), TMPro.TextAlignmentOptions.Left);
+            hud.levelText = UIText(top, "Level", "-", 38, new Vector2(1240, 0), new Vector2(500, 70), TMPro.TextAlignmentOptions.Left);
+
+            // --- Bölüm seçici (ilk dalga öncesi) ---
+            var lvlRow = UIPanel(t, "LevelRow", new Vector2(0, 1), new Vector2(1, 1),
+                new Vector2(0.5f, 1), new Vector2(0, -88), new Vector2(0, 76), new Color(0, 0, 0, 0.30f));
+            hud.levelRow = lvlRow.gameObject;
+            hud.levelButtons = new UnityEngine.UI.Button[levels.Length];
+            for (int i = 0; i < levels.Length; i++)
+            {
+                var (b, _) = UIButton(lvlRow, "Lvl" + (i + 1), "B" + (i + 1),
+                    new Vector2(40 + i * 120, 0), new Vector2(104, 60), btnBg, null);
+                hud.levelButtons[i] = b;
+            }
+
+            // --- Alt bar ---
+            var bottom = UIPanel(t, "BottomBar", new Vector2(0, 0), new Vector2(1, 0),
+                new Vector2(0.5f, 0), Vector2.zero, new Vector2(0, 96), barBg);
+
+            var (nextBtn, _) = UIButton(bottom, "NextWave", "Sonraki Dalga",
+                new Vector2(30, 0), new Vector2(330, 72), btnBg, "hud.next_wave");
+            hud.nextWaveButton = nextBtn;
+
+            hud.heroButtons = new UnityEngine.UI.Button[heroes.Length];
+            hud.heroButtonLabels = new TMPro.TMP_Text[heroes.Length];
+            for (int i = 0; i < heroes.Length; i++)
+            {
+                var (b, lbl) = UIButton(bottom, "Hero_" + heroes[i].heroId, heroes[i].heroId,
+                    new Vector2(400 + i * 260, 0), new Vector2(244, 72), btnBg, null);
+                hud.heroButtons[i] = b;
+                hud.heroButtonLabels[i] = lbl;
+            }
+
+            hud.speedButtons = new UnityEngine.UI.Button[3];
+            string[] speedLabels = { "1×", "2×", "3×" };
+            for (int i = 0; i < 3; i++)
+            {
+                var (b, _) = UIButton(bottom, "Speed" + speedLabels[i], speedLabels[i],
+                    new Vector2(1230 + i * 110, 0), new Vector2(96, 72), btnBg, null);
+                hud.speedButtons[i] = b;
+            }
+
+            var (langBtn, langLbl) = UIButton(bottom, "Lang", "EN",
+                new Vector2(1590 + 0, 0), new Vector2(110, 72), btnBg, null);
+            hud.langButton = langBtn;
+            hud.langButtonLabel = langLbl;
+
+            // --- Sonuç panelleri ---
+            hud.victoryPanel = BuildResultPanel(t, "VictoryPanel", "game.victory",
+                out var vStars, out var vBtn, btnBg);
+            hud.starsText = vStars;
+            hud.victoryButton = vBtn;
+
+            hud.defeatPanel = BuildResultPanel(t, "DefeatPanel", "game.defeat",
+                out _, out var dBtn, btnBg);
+            hud.defeatButton = dBtn;
+
+            return hud;
+        }
+
+        private static GameObject BuildResultPanel(
+            Transform parent, string name, string titleKey,
+            out TMPro.TMP_Text stars, out UnityEngine.UI.Button button, Color btnBg)
+        {
+            var panel = UIPanel(parent, name, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680, 400), new Color(0.04f, 0.04f, 0.08f, 0.88f));
+
+            var title = UIText(panel, "Title", titleKey, 60, Vector2.zero, new Vector2(640, 90), TMPro.TextAlignmentOptions.Center);
+            title.rectTransform.anchoredPosition = new Vector2(0, 110);
+            title.rectTransform.anchorMin = title.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            var lt = title.gameObject.AddComponent<LocalizedText>();
+            lt.key = titleKey;
+
+            stars = UIText(panel, "Stars", "", 54, Vector2.zero, new Vector2(640, 80), TMPro.TextAlignmentOptions.Center);
+            stars.rectTransform.anchorMin = stars.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            stars.rectTransform.anchoredPosition = new Vector2(0, 20);
+
+            var (b, _) = UIButton(panel, "Action", "▶", new Vector2(0, 0), new Vector2(300, 76), btnBg, "menu.play");
+            var brt = b.GetComponent<RectTransform>();
+            brt.anchorMin = brt.anchorMax = new Vector2(0.5f, 0.5f);
+            brt.pivot = new Vector2(0.5f, 0.5f);
+            brt.anchoredPosition = new Vector2(0, -110);
+            button = b;
+
+            return panel.gameObject;
+        }
+
+        // --- UI yardımcıları ---
+        private static RectTransform UIPanel(Transform parent, string name,
+            Vector2 aMin, Vector2 aMax, Vector2 pivot, Vector2 pos, Vector2 size, Color color)
+        {
+            var go = new GameObject(name, typeof(UnityEngine.UI.Image));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = aMin; rt.anchorMax = aMax; rt.pivot = pivot;
+            rt.anchoredPosition = pos; rt.sizeDelta = size;
+            go.GetComponent<UnityEngine.UI.Image>().color = color;
+            return rt;
+        }
+
+        private static TMPro.TMP_Text UIText(Transform parent, string name, string text,
+            float fontSize, Vector2 pos, Vector2 size, TMPro.TextAlignmentOptions align)
+        {
+            var go = new GameObject(name, typeof(TMPro.TextMeshProUGUI));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0.5f); rt.anchorMax = new Vector2(0, 0.5f);
+            rt.pivot = new Vector2(0, 0.5f);
+            rt.anchoredPosition = pos; rt.sizeDelta = size;
+            var tmp = go.GetComponent<TMPro.TextMeshProUGUI>();
+            tmp.text = text; tmp.fontSize = fontSize; tmp.alignment = align;
+            tmp.color = new Color(0.92f, 0.90f, 0.84f);
+            return tmp;
+        }
+
+        private static (UnityEngine.UI.Button, TMPro.TMP_Text) UIButton(Transform parent, string name,
+            string label, Vector2 pos, Vector2 size, Color bg, string locKey)
+        {
+            var go = new GameObject(name, typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0.5f); rt.anchorMax = new Vector2(0, 0.5f);
+            rt.pivot = new Vector2(0, 0.5f);
+            rt.anchoredPosition = pos; rt.sizeDelta = size;
+            var img = go.GetComponent<UnityEngine.UI.Image>();
+            img.color = bg;
+            var btn = go.GetComponent<UnityEngine.UI.Button>();
+            btn.targetGraphic = img;
+
+            var lblGo = new GameObject("Label", typeof(TMPro.TextMeshProUGUI));
+            lblGo.transform.SetParent(go.transform, false);
+            var lrt = lblGo.GetComponent<RectTransform>();
+            lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
+            lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
+            var tmp = lblGo.GetComponent<TMPro.TextMeshProUGUI>();
+            tmp.text = label; tmp.fontSize = 32;
+            tmp.alignment = TMPro.TextAlignmentOptions.Center;
+            tmp.color = new Color(0.92f, 0.90f, 0.84f);
+            if (!string.IsNullOrEmpty(locKey))
+                lblGo.AddComponent<LocalizedText>().key = locKey;
+
+            return (btn, tmp);
+        }
 
         // ================= SAHNE PARÇALARI =================
 
