@@ -33,7 +33,7 @@ namespace Golgehalka.Combat
         private void Awake()
         {
             model = transform.Find("Model");
-            bobPhase = Random.Range(0f, 6.28f); // sürüde senkron kırıcı rastgele faz
+            bobPhase = UnityEngine.Random.Range(0f, 6.28f); // sürüde senkron kırıcı rastgele faz
         }
 
         public void Init(EnemyDefinition def, WaypointPath followPath)
