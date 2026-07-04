@@ -6,42 +6,96 @@ using UnityEngine.UI;
 
 namespace Golgehalka.UI
 {
-    /// Ana menü: Oyna / Kahramanlar / Dükkân / Ayarlar (+dil seçici).
-    /// Buton metinleri LocalizedText ile bağlanır (menu.play vb.).
+    /// Ana menü: karanlık atmosfer, Zarok vitrini, köz partikülleri.
+    /// Butonlar çalışma anında kablolanır (editor listener'ları serileşmez).
     public class MainMenuController : MonoBehaviour
     {
-        [SerializeField] private string levelSelectScene = "LevelSelect";
-        [SerializeField] private GameObject settingsPanel;
-        [SerializeField] private GameObject shopPanel;
-        [SerializeField] private TMP_Dropdown languageDropdown;
+        public Button playButton;
+        public Button langButton;
+        public TMP_Text langLabel;
+        public Button creditsButton;
+        public GameObject creditsPanel;
+        public Button creditsCloseButton;
+        public Transform zarok;              // yavaş vitrin dönüşü
 
-        // Dropdown sırası — LocalizationManager.Supported ile aynı
-        private static readonly string[] LocaleCodes = { "en", "de", "ru", "zh-Hans", "hi", "ar", "tr" };
-        private static readonly string[] LocaleNames =
-            { "English", "Deutsch", "Русский", "简体中文", "हिन्दी", "العربية", "Türkçe" };
+        private static readonly string[] Locales = { "en", "de", "ru", "zh-Hans", "hi", "ar", "tr" };
+
+        private void Awake()
+        {
+            // MatchHUD ile aynı yaklaşım: OS fontundan geniş kapsamlı dinamik font
+            var installed = new System.Collections.Generic.HashSet<string>(Font.GetOSInstalledFontNames());
+            foreach (string name in new[] { "Arial", "Helvetica Neue", "Helvetica", "Roboto" })
+            {
+                if (!installed.Contains(name)) continue;
+                try
+                {
+                    Font os = Font.CreateDynamicFontFromOSFont(name, 48);
+                    if (os == null) continue;
+                    var tmpFont = TMP_FontAsset.CreateFontAsset(os);
+                    if (tmpFont == null) continue;
+                    foreach (var t in GetComponentsInChildren<TMP_Text>(true)) t.font = tmpFont;
+                    break;
+                }
+                catch { }
+            }
+        }
 
         private void Start()
         {
             LocalizationManager.Init();
-            SetupLanguageDropdown();
+            langLabel.text = LocalizationManager.CurrentLocale.ToUpperInvariant();
+
+            playButton.onClick.AddListener(() => SceneManager.LoadScene("Prototype"));
+            langButton.onClick.AddListener(CycleLanguage);
+            creditsButton.onClick.AddListener(() => creditsPanel.SetActive(true));
+            creditsCloseButton.onClick.AddListener(() => creditsPanel.SetActive(false));
+            creditsPanel.SetActive(false);
+
+            SpawnEmbers();
         }
 
-        public void OnPlay() => SceneManager.LoadScene(levelSelectScene);
-        public void OnSettings() => settingsPanel.SetActive(true);
-        public void OnShop() => shopPanel.SetActive(true);
-
-        private void SetupLanguageDropdown()
+        private void Update()
         {
-            languageDropdown.ClearOptions();
-            var opts = new System.Collections.Generic.List<string>(LocaleNames);
-            languageDropdown.AddOptions(opts);
-            languageDropdown.value = System.Array.IndexOf(LocaleCodes, LocalizationManager.CurrentLocale);
-            languageDropdown.onValueChanged.AddListener(
-                i => LocalizationManager.SetLocale(LocaleCodes[i]));
+            if (zarok != null)
+                zarok.Rotate(0, 4f * Time.deltaTime, 0); // heybetli vitrin dönüşü
         }
 
-        // Ayarlar panelindeki ses slider'ları
-        public void OnMusicVolume(float v) { PlayerProfile.Data.musicVolume = v; PlayerProfile.Save(); }
-        public void OnSfxVolume(float v) { PlayerProfile.Data.sfxVolume = v; PlayerProfile.Save(); }
+        private void CycleLanguage()
+        {
+            int i = System.Array.IndexOf(Locales, LocalizationManager.CurrentLocale);
+            LocalizationManager.SetLocale(Locales[(i + 1) % Locales.Length]);
+            langLabel.text = LocalizationManager.CurrentLocale.ToUpperInvariant();
+        }
+
+        /// Havada süzülen közler — Diablo menü havasının yarısı budur.
+        private void SpawnEmbers()
+        {
+            var go = new GameObject("Embers");
+            go.transform.position = new Vector3(0, 0.1f, -1f);
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop();
+
+            var main = ps.main;
+            main.loop = true;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(3f, 6f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.25f, 0.7f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.02f, 0.07f);
+            main.startColor = new ParticleSystem.MinMaxGradient(
+                new Color(1f, 0.6f, 0.2f), new Color(1f, 0.35f, 0.1f));
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+            var em = ps.emission; em.rateOverTime = 16f;
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = new Vector3(8f, 0.2f, 5f);
+
+            var vel = ps.velocityOverLifetime;
+            vel.enabled = true;
+            vel.y = new ParticleSystem.MinMaxCurve(0.3f, 0.8f);
+            vel.x = new ParticleSystem.MinMaxCurve(-0.15f, 0.15f);
+
+            go.GetComponent<ParticleSystemRenderer>().material = VFX.ParticleMaterial;
+            ps.Play();
+        }
     }
 }

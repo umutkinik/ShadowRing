@@ -33,6 +33,9 @@ namespace Golgehalka.Combat
             if ((transform.position - dest).sqrMagnitude < 0.04f)
             {
                 target.TakeDamage(damage, type, armorPen);
+                // Çarpma kıvılcımı + darbe sesi
+                Core.VFX.Burst(dest, new Color(1f, 0.9f, 0.55f), 7, 2.2f, 0.13f, 0.25f);
+                Core.AudioManager.Hit();
                 Destroy(gameObject);
             }
         }

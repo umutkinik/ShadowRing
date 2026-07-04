@@ -5,6 +5,8 @@ using Golgehalka.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Golgehalka.EditorTools
 {
@@ -156,6 +158,7 @@ namespace Golgehalka.EditorTools
             {
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_trees.glb"),
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_watchtower.glb"),
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act3_rocks.glb"), // kaya çeşitliliği
             };
             var groundTones = new[]
             {
@@ -181,6 +184,27 @@ namespace Golgehalka.EditorTools
             cam.transform.position = new Vector3(0, 13.5f, -10.5f);
             cam.transform.rotation = Quaternion.Euler(50, 0, 0); // 55→50: siluetler daha okunur
             cam.backgroundColor = new Color(0.09f, 0.10f, 0.13f);
+
+            // Post-processing: vinyet + hafif renk düzeltme (Diablo havası)
+            cam.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+            EnsureFolder("Assets", "Settings");
+            var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            AssetDatabase.DeleteAsset("Assets/Settings/GamePostFX.asset");
+            AssetDatabase.CreateAsset(profile, "Assets/Settings/GamePostFX.asset");
+            var vig = profile.Add<Vignette>(true);
+            AssetDatabase.AddObjectToAsset(vig, profile);
+            vig.intensity.Override(0.34f);
+            vig.smoothness.Override(0.5f);
+            var colorAdj = profile.Add<ColorAdjustments>(true);
+            AssetDatabase.AddObjectToAsset(colorAdj, profile);
+            colorAdj.postExposure.Override(0.12f);
+            colorAdj.saturation.Override(7f);
+            EditorUtility.SetDirty(profile);
+            AssetDatabase.SaveAssets();
+            var volGO = new GameObject("PostFX");
+            var vol = volGO.AddComponent<Volume>();
+            vol.isGlobal = true;
+            vol.profile = profile;
 
             // Sıcak öğleden sonra ışığı + yumuşak gölgeler
             var lightGO = GameObject.Find("Directional Light");
@@ -236,6 +260,7 @@ namespace Golgehalka.EditorTools
             audio.flame = LoadClip("sfx_flame");
             audio.thunder = LoadClip("sfx_thunder");
             audio.quake = LoadClip("sfx_quake");
+            audio.die = LoadClip("sfx_die");
             audio.battleMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
 
             // Ortam olayları: ejderha, yıldırım, ateş yağmuru, deprem
@@ -557,7 +582,7 @@ namespace Golgehalka.EditorTools
         }
 
         // --- UI yardımcıları ---
-        private static RectTransform UIPanel(Transform parent, string name,
+        internal static RectTransform UIPanel(Transform parent, string name,
             Vector2 aMin, Vector2 aMax, Vector2 pivot, Vector2 pos, Vector2 size, Color color)
         {
             var go = new GameObject(name, typeof(UnityEngine.UI.Image));
@@ -569,7 +594,7 @@ namespace Golgehalka.EditorTools
             return rt;
         }
 
-        private static TMPro.TMP_Text UIText(Transform parent, string name, string text,
+        internal static TMPro.TMP_Text UIText(Transform parent, string name, string text,
             float fontSize, Vector2 pos, Vector2 size, TMPro.TextAlignmentOptions align)
         {
             var go = new GameObject(name, typeof(TMPro.TextMeshProUGUI));
@@ -584,7 +609,7 @@ namespace Golgehalka.EditorTools
             return tmp;
         }
 
-        private static (UnityEngine.UI.Button, TMPro.TMP_Text) UIButton(Transform parent, string name,
+        internal static (UnityEngine.UI.Button, TMPro.TMP_Text) UIButton(Transform parent, string name,
             string label, Vector2 pos, Vector2 size, Color bg, string locKey)
         {
             var go = new GameObject(name, typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
@@ -633,7 +658,7 @@ namespace Golgehalka.EditorTools
         private static AudioClip LoadClip(string name) =>
             AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name + ".wav");
 
-        private static void EnsureFolder(string parent, string name)
+        internal static void EnsureFolder(string parent, string name)
         {
             if (!AssetDatabase.IsValidFolder(parent + "/" + name))
                 AssetDatabase.CreateFolder(parent, name);

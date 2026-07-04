@@ -55,62 +55,83 @@ namespace Golgehalka.Core
             Vector3 from = new Vector3(ltr ? -17f : 17f, 4.5f, z);
             Vector3 to = new Vector3(-from.x, 4.5f, z + Random.Range(-2f, 2f));
 
-            var dragon = Instantiate(dragonPrefab, from, Quaternion.LookRotation(to - from));
+            Quaternion baseRot = Quaternion.LookRotation(to - from);
+            var dragon = Instantiate(dragonPrefab, from, baseRot);
             AudioManager.Flame();
 
             float fireTick = 0f;
             while ((dragon.transform.position - to).sqrMagnitude > 1f)
             {
+                // 5.5 hız: heybetli süzülüş + kanat yalpası + hafif yükselme-alçalma
                 dragon.transform.position = Vector3.MoveTowards(
-                    dragon.transform.position, to, 9f * Time.deltaTime);
+                    dragon.transform.position, to, 5.5f * Time.deltaTime);
+                dragon.transform.rotation = baseRot *
+                    Quaternion.Euler(Mathf.Sin(Time.time * 2.2f) * 6f, 0, Mathf.Sin(Time.time * 1.7f) * 12f);
+                var p = dragon.transform.position;
+                p.y = 4.5f + Mathf.Sin(Time.time * 1.3f) * 0.5f;
+                dragon.transform.position = p;
+
                 fireTick -= Time.deltaTime;
                 if (fireTick <= 0f)
                 {
-                    fireTick = 0.22f;
+                    fireTick = 0.3f;
                     Vector3 g = dragon.transform.position; g.y = 0.15f;
                     DamageArea(g, 2.1f, 30f, DamageType.Fire);
-                    StartCoroutine(Puff(g, FlameMat(), 1.4f, 0.45f));
+                    // Alev patlaması + yükselen duman
+                    VFX.Burst(g, new Color(1f, 0.55f, 0.15f), 24, 3.8f, 0.32f, 0.55f, 0.3f);
+                    VFX.Burst(g + Vector3.up * 0.4f, new Color(0.3f, 0.25f, 0.22f, 0.7f), 8, 1.1f, 0.5f, 1f, -0.12f);
+                    if (Random.value < 0.3f) AudioManager.Flame();
                 }
                 yield return null;
             }
             Destroy(dragon);
         }
 
-        // ---------- ⚡ YILDIRIM ----------
+        // ---------- ⚡ YILDIRIM FIRTINASI (3-5 düşüş) ----------
         private IEnumerator LightningStrike()
         {
-            // Hedef: rastgele canlı düşman (yoksa olay iptal)
-            Enemy target = null;
-            if (Enemy.Active.Count > 0)
-                target = Enemy.Active[Random.Range(0, Enemy.Active.Count)];
-            if (target == null || !target.IsAlive) yield break;
-
-            Vector3 hit = target.transform.position; hit.y = 0.1f;
-            AudioManager.Thunder();
-
-            // Gökten inen parlak sütun + flaş ışığı — iki kez titreşir
-            for (int flash = 0; flash < 2; flash++)
+            int strikes = Random.Range(3, 6);
+            for (int s = 0; s < strikes; s++)
             {
-                var bolt = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                Destroy(bolt.GetComponent<Collider>());
-                bolt.GetComponent<Renderer>().sharedMaterial = BoltMat();
-                bolt.transform.position = hit + Vector3.up * 5f;
-                bolt.transform.localScale = new Vector3(0.22f - flash * 0.08f, 5f, 0.22f - flash * 0.08f);
+                Enemy target = null;
+                if (Enemy.Active.Count > 0)
+                    target = Enemy.Active[Random.Range(0, Enemy.Active.Count)];
+                if (target == null || !target.IsAlive)
+                {
+                    yield return new WaitForSeconds(0.4f);
+                    continue;
+                }
 
-                var lightGO = new GameObject("Flash");
-                var l = lightGO.AddComponent<Light>();
-                l.type = UnityEngine.LightType.Point;
-                l.color = new Color(0.8f, 0.85f, 1f);
-                l.intensity = 9f; l.range = 14f;
-                lightGO.transform.position = hit + Vector3.up * 2.5f;
+                Vector3 hit = target.transform.position; hit.y = 0.1f;
+                AudioManager.Thunder();
 
-                yield return new WaitForSeconds(0.07f);
-                Destroy(bolt); Destroy(lightGO);
-                yield return new WaitForSeconds(0.05f);
+                // Gökten inen parlak sütun + flaş — iki titreşim
+                for (int flash = 0; flash < 2; flash++)
+                {
+                    var bolt = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    Destroy(bolt.GetComponent<Collider>());
+                    bolt.GetComponent<Renderer>().sharedMaterial = BoltMat();
+                    bolt.transform.position = hit + Vector3.up * 5f;
+                    bolt.transform.localScale = new Vector3(0.22f - flash * 0.08f, 5f, 0.22f - flash * 0.08f);
+
+                    var lightGO = new GameObject("Flash");
+                    var l = lightGO.AddComponent<Light>();
+                    l.type = UnityEngine.LightType.Point;
+                    l.color = new Color(0.8f, 0.85f, 1f);
+                    l.intensity = 9f; l.range = 14f;
+                    lightGO.transform.position = hit + Vector3.up * 2.5f;
+
+                    yield return new WaitForSeconds(0.07f);
+                    Destroy(bolt); Destroy(lightGO);
+                    yield return new WaitForSeconds(0.05f);
+                }
+
+                DamageArea(hit, 1.6f, 90f, DamageType.Magic); // zırh işlemez
+                VFX.Burst(hit, new Color(0.75f, 0.85f, 1f), 22, 4.5f, 0.2f, 0.4f);
+                VFX.Burst(hit, new Color(1f, 1f, 1f), 8, 1.5f, 0.35f, 0.25f);
+
+                yield return new WaitForSeconds(Random.Range(0.35f, 0.75f));
             }
-
-            DamageArea(hit, 1.6f, 90f, DamageType.Magic); // zırh işlemez
-            StartCoroutine(Puff(hit, BoltMat(), 1.2f, 0.3f));
         }
 
         // ---------- 🌋 ATEŞ YAĞMURU ----------
@@ -153,7 +174,8 @@ namespace Golgehalka.Core
             }
             Destroy(rock);
             DamageArea(impact, 1.8f, 25f, DamageType.Fire);
-            StartCoroutine(Puff(impact, FlameMat(), 1.5f, 0.4f));
+            VFX.Burst(impact, new Color(1f, 0.5f, 0.12f), 26, 4.2f, 0.3f, 0.5f, 0.35f);
+            VFX.Burst(impact + Vector3.up * 0.3f, new Color(0.3f, 0.25f, 0.2f, 0.7f), 10, 1.3f, 0.55f, 1.1f, -0.1f);
         }
 
         // ---------- 🌍 DEPREM ----------
@@ -169,7 +191,7 @@ namespace Golgehalka.Core
             // Toz bulutları
             foreach (Enemy e in slowed)
                 if (Random.value < 0.5f)
-                    StartCoroutine(Puff(e.transform.position + Vector3.down * 0.2f, DustMat(), 1.1f, 0.6f));
+                    VFX.Burst(e.transform.position, new Color(0.6f, 0.55f, 0.45f, 0.8f), 12, 1.4f, 0.45f, 0.9f, -0.05f);
 
             // Kamera sarsıntısı
             var cam = Camera.main.transform;
