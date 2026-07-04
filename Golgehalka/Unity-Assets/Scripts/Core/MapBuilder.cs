@@ -11,7 +11,8 @@ namespace Golgehalka.Core
     /// Böylece 6 bölüm = 6 farklı harita; bölüm seçilince harita anında değişir.
     public class MapBuilder : MonoBehaviour
     {
-        public WaypointPath path;   // sahnedeki (boş) yol objesi
+        public WaypointPath path;        // sahnedeki (boş) yol objesi
+        public Renderer groundRenderer;  // bölüm rengine boyanır
 
         private readonly List<GameObject> spawned = new List<GameObject>();
         private Material pathMat, nodeMat;
@@ -73,6 +74,58 @@ namespace Golgehalka.Core
                 node.AddComponent<PlacementNode>();
                 spawned.Add(node);
             }
+
+            // 4) Tema: zemin rengi + dekor serpme
+            if (groundRenderer != null)
+            {
+                groundRenderer.material.color = level.groundColor; // instance materyal
+            }
+            ScatterDecor(level);
+        }
+
+        /// Çevre modellerini yoldan/platformlardan uzağa, bölüm başına
+        /// DETERMİNİSTİK (levelId tohumlu) şekilde serpiştirir.
+        private void ScatterDecor(LevelDefinition level)
+        {
+            if (level.decorPrefabs == null || level.decorPrefabs.Length == 0) return;
+            var rng = new System.Random(level.levelId.GetHashCode());
+
+            int placed = 0, attempts = 0;
+            while (placed < level.decorCount && attempts < level.decorCount * 12)
+            {
+                attempts++;
+                var pos = new Vector3(
+                    (float)(rng.NextDouble() * 21f - 10.5f), 0f,
+                    (float)(rng.NextDouble() * 15f - 7.5f));
+
+                if (DistanceToPath(pos, level.waypoints) < 2.2f) continue;
+                bool nearNode = false;
+                foreach (Vector3 n in level.nodePositions)
+                    if (Vector3.Distance(pos, new Vector3(n.x, 0, n.z)) < 2.2f) { nearNode = true; break; }
+                if (nearNode) continue;
+
+                var prefab = level.decorPrefabs[rng.Next(level.decorPrefabs.Length)];
+                if (prefab == null) continue;
+                var deco = Instantiate(prefab, pos, Quaternion.Euler(0, (float)(rng.NextDouble() * 360), 0));
+                float s = 0.8f + (float)rng.NextDouble() * 0.5f; // boyut çeşitliliği
+                deco.transform.localScale = Vector3.one * s;
+                spawned.Add(deco);
+                placed++;
+            }
+        }
+
+        private static float DistanceToPath(Vector3 p, Vector3[] wps)
+        {
+            float best = float.MaxValue;
+            for (int i = 0; i < wps.Length - 1; i++)
+            {
+                Vector3 a = new Vector3(wps[i].x, 0, wps[i].z);
+                Vector3 b = new Vector3(wps[i + 1].x, 0, wps[i + 1].z);
+                Vector3 ab = b - a;
+                float t = Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude);
+                best = Mathf.Min(best, Vector3.Distance(p, a + ab * t));
+            }
+            return best;
         }
 
         /// Önceki haritayı ve üzerine kurulmuş kuleleri temizle.

@@ -24,9 +24,17 @@ namespace Golgehalka.Combat
 
         private WaypointPath path;
         private int waypointIndex;
+        private Transform model;        // prosedürel yürüyüş sallanması için
+        private float bobPhase;
 
         private void OnEnable() => Active.Add(this);
         private void OnDisable() => Active.Remove(this);
+
+        private void Awake()
+        {
+            model = transform.Find("Model");
+            bobPhase = (GetInstanceID() & 0xFF) * 0.13f; // sürüde senkron kırıcı faz
+        }
 
         public void Init(EnemyDefinition def, WaypointPath followPath)
         {
@@ -49,6 +57,17 @@ namespace Golgehalka.Combat
             transform.position = Vector3.MoveTowards(
                 transform.position, target, Def.moveSpeed * Time.deltaTime);
             transform.LookAt(target);
+
+            // Prosedürel yürüyüş: hıza bağlı iki yana sallanma + minik zıplama
+            // (Mixamo iskelet animasyonları gelene dek sahneyi canlı tutar)
+            if (model != null)
+            {
+                float t = Time.time * (4f + Def.moveSpeed * 2.5f) + bobPhase;
+                model.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(t) * 6f);
+                var lp = model.localPosition;
+                lp.y = -0.13f + Mathf.Abs(Mathf.Sin(t)) * 0.07f;
+                model.localPosition = lp;
+            }
 
             if ((transform.position - target).sqrMagnitude < 0.01f)
             {
@@ -74,7 +93,17 @@ namespace Golgehalka.Combat
         {
             EconomyManager.Instance.AddGold(Def.goldReward);
             OnAnyEnemyDied?.Invoke(this);
-            // TODO: ölüm animasyonu + havuz (object pooling) — Faz 1
+            StartCoroutine(DeathShrink()); // hızlı küçülme — anlık yok oluştan iyi
+        }
+
+        private System.Collections.IEnumerator DeathShrink()
+        {
+            Vector3 start = transform.localScale;
+            for (float t = 0; t < 0.18f; t += Time.deltaTime)
+            {
+                transform.localScale = start * (1f - t / 0.18f);
+                yield return null;
+            }
             Destroy(gameObject);
         }
 

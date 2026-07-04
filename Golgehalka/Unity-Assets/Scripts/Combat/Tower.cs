@@ -13,6 +13,8 @@ namespace Golgehalka.Combat
 
         [SerializeField] private Transform firePoint;
         [SerializeField] private TargetPriority priority = TargetPriority.First;
+        [SerializeField] private GameObject[] tierVisuals; // K1/K2/K3 platform modelleri
+        [SerializeField] private Transform heroModel;      // atışta hedefe döner
 
         private void OnEnable() => Active.Add(this);
         private void OnDisable() => Active.Remove(this);
@@ -52,20 +54,26 @@ namespace Golgehalka.Combat
             return true;
         }
 
-        /// Kuleyi sat: %60 iade + platform boşalır.
+        /// Kuleyi sat: %60 iade + platform boşalır (taş görünümü geri gelir).
         public void Sell()
         {
             Core.EconomyManager.Instance.AddGold(SellRefund);
-            if (Node != null) Node.Occupant = null;
+            if (Node != null)
+            {
+                Node.Occupant = null;
+                var r = Node.GetComponent<Renderer>();
+                if (r != null) r.enabled = true;
+            }
             Destroy(gameObject);
         }
 
         private void ApplyTierVisual()
         {
-            // Kademeye göre model değişimi — tierModel prefab'ları
-            for (int i = 0; i < Hero.tiers.Length; i++)
-                if (Hero.tiers[i].tierModel != null)
-                    Hero.tiers[i].tierModel.SetActive(i == TierIndex);
+            // Kademe platformu değişimi: K1 taş → K2 bronz → K3 altın rünlü
+            if (tierVisuals == null) return;
+            for (int i = 0; i < tierVisuals.Length; i++)
+                if (tierVisuals[i] != null)
+                    tierVisuals[i].SetActive(i == TierIndex);
         }
 
         private void Update()
@@ -108,11 +116,34 @@ namespace Golgehalka.Combat
 
         private void Fire(Enemy target)
         {
+            // Kahraman hedefe döner + kısa "atış tepkisi" (scale punch)
+            if (heroModel != null)
+            {
+                Vector3 dir = target.transform.position - transform.position;
+                dir.y = 0;
+                if (dir.sqrMagnitude > 0.01f)
+                    heroModel.rotation = Quaternion.LookRotation(dir);
+                StopAllCoroutines();
+                StartCoroutine(AttackPunch());
+            }
+
             var go = Instantiate(Hero.projectilePrefab,
                 firePoint != null ? firePoint.position : transform.position,
                 Quaternion.identity);
             go.GetComponent<Projectile>().Init(
                 target, Tier.damage, Hero.damageType, Hero.armorPenetration, Hero.projectileSpeed);
+        }
+
+        private System.Collections.IEnumerator AttackPunch()
+        {
+            Vector3 baseScale = heroModel.localScale;
+            for (float t = 0; t < 0.14f; t += Time.deltaTime)
+            {
+                float k = 1f + Mathf.Sin(t / 0.14f * Mathf.PI) * 0.1f;
+                heroModel.localScale = baseScale * k;
+                yield return null;
+            }
+            heroModel.localScale = baseScale;
         }
 
         private void OnDrawGizmosSelected()

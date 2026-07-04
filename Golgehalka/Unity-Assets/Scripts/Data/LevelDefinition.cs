@@ -33,5 +33,10 @@ namespace Golgehalka.Data
         [Header("Harita — her bölümün kendi yolu ve platformları")]
         public Vector3[] waypoints;      // düşman güzergâhı
         public Vector3[] nodePositions;  // kule platformu yerleri
+
+        [Header("Tema — dekor ve atmosfer")]
+        public GameObject[] decorPrefabs;               // serpiştirilecek çevre modelleri
+        public int decorCount = 10;
+        public Color groundColor = new Color(0.25f, 0.32f, 0.22f);
     }
 }

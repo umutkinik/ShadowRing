@@ -151,6 +151,27 @@ namespace Golgehalka.EditorTools
                     N(-2, -3.5f, 3.8f, -3.6f, 8.5f, 0, 3, 3, -3, 3, -8.5f, 3, -4.5f, -2, -8, -3.5f)),
             };
 
+            // Tema ataması: Act I dekorları (ağaç kümeleri + gözetleme kulesi) + zemin tonları
+            var act1Decor = new[]
+            {
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_trees.glb"),
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/act1_watchtower.glb"),
+            };
+            var groundTones = new[]
+            {
+                new Color(0.25f, 0.32f, 0.22f), new Color(0.23f, 0.34f, 0.20f),
+                new Color(0.27f, 0.33f, 0.19f), new Color(0.23f, 0.30f, 0.24f),
+                new Color(0.26f, 0.31f, 0.18f), new Color(0.21f, 0.27f, 0.22f),
+            };
+            for (int i = 0; i < levels.Length; i++)
+            {
+                levels[i].decorPrefabs = act1Decor;
+                levels[i].decorCount = 9;
+                levels[i].groundColor = groundTones[i];
+                EditorUtility.SetDirty(levels[i]);
+            }
+            AssetDatabase.SaveAssets();
+
             // ---- 5) SAHNE ----
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
@@ -176,6 +197,7 @@ namespace Golgehalka.EditorTools
 
             var mapBuilder = mgr.AddComponent<MapBuilder>();
             mapBuilder.path = path;
+            mapBuilder.groundRenderer = ground.GetComponent<Renderer>();
 
             var wave = mgr.AddComponent<WaveManager>();
             wave.level = levels[0];
@@ -229,28 +251,88 @@ namespace Golgehalka.EditorTools
         private static HeroDefinition MakeHero(
             string id, Color color, GameObject projectile, System.Action<HeroDefinition> tune)
         {
-            GameObject towerPrefab = MakePrimitivePrefab(
-                PrimitiveType.Cylinder, "Tower_" + id, 1f, color,
-                go =>
-                {
-                    go.transform.localScale = new Vector3(0.8f, 0.5f, 0.8f);
-                    var fire = new GameObject("FirePoint");
-                    fire.transform.SetParent(go.transform);
-                    fire.transform.localPosition = new Vector3(0, 3f, 0);
-                    var tower = go.AddComponent<Tower>();
-                    var so = new SerializedObject(tower);
-                    so.FindProperty("firePoint").objectReferenceValue = fire.transform;
-                    so.ApplyModifiedPropertiesWithoutUndo();
-                    AttachModel(go, ModelDir + "/" + id + ".glb",
-                        new Vector3(0, 1f, 0), new Vector3(1f / 0.8f, 1f / 0.5f, 1f / 0.8f));
-                });
-
+            GameObject towerPrefab = MakeTowerPrefab(id, color);
             return CreateAsset<HeroDefinition>(DataDir + "/Hero_" + id + ".asset", h =>
             {
                 h.heroId = id; h.nameKey = "hero." + id + ".name";
                 h.projectilePrefab = projectile; h.towerPrefab = towerPrefab;
                 tune(h);
             });
+        }
+
+        /// Kule prefab'ı: 3 kademe platformu (taş→bronz→altın) + üstünde kahraman.
+        /// Platform GLB'leri yoksa renkli silindire düşer (asla kırılmaz).
+        private static GameObject MakeTowerPrefab(string id, Color fallback)
+        {
+            var go = new GameObject("Tower_" + id);
+            var col = go.AddComponent<BoxCollider>();
+            col.center = new Vector3(0, 0.9f, 0);
+            col.size = new Vector3(1.5f, 2f, 1.5f);
+
+            var fire = new GameObject("FirePoint");
+            fire.transform.SetParent(go.transform);
+            fire.transform.localPosition = new Vector3(0, 2.2f, 0);
+
+            var tower = go.AddComponent<Tower>();
+
+            // Kademe platformları
+            string[] tierFiles = { "tier1_base", "tier2_base", "tier3_base" };
+            var tierGOs = new GameObject[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var model = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/" + tierFiles[i] + ".glb");
+                GameObject tierGO;
+                if (model != null)
+                {
+                    tierGO = Object.Instantiate(model, go.transform);
+                    tierGO.transform.localScale = Vector3.one * 0.75f;
+                }
+                else
+                {
+                    tierGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    Object.DestroyImmediate(tierGO.GetComponent<Collider>());
+                    tierGO.transform.SetParent(go.transform);
+                    tierGO.transform.localScale = new Vector3(0.8f, 0.2f, 0.8f);
+                    Tint(tierGO, fallback);
+                }
+                tierGO.name = "Tier" + (i + 1);
+                tierGO.transform.localPosition = Vector3.zero;
+                tierGO.SetActive(i == 0);
+                tierGOs[i] = tierGO;
+            }
+
+            // Kahraman modeli platformun üstünde
+            GameObject heroGO;
+            var heroModel = AssetDatabase.LoadAssetAtPath<GameObject>(ModelDir + "/" + id + ".glb");
+            if (heroModel != null)
+            {
+                heroGO = Object.Instantiate(heroModel, go.transform);
+            }
+            else
+            {
+                heroGO = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                Object.DestroyImmediate(heroGO.GetComponent<Collider>());
+                heroGO.transform.SetParent(go.transform);
+                Tint(heroGO, fallback);
+            }
+            heroGO.name = "HeroModel";
+            heroGO.transform.localPosition = new Vector3(0, 0.32f, 0);
+
+            // Serileştirilmiş alanları bağla
+            var so = new SerializedObject(tower);
+            so.FindProperty("firePoint").objectReferenceValue = fire.transform;
+            so.FindProperty("heroModel").objectReferenceValue = heroGO.transform;
+            var arr = so.FindProperty("tierVisuals");
+            arr.arraySize = 3;
+            for (int i = 0; i < 3; i++)
+                arr.GetArrayElementAtIndex(i).objectReferenceValue = tierGOs[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            string prefabPath = PrefabDir + "/Tower_" + id + ".prefab";
+            AssetDatabase.DeleteAsset(prefabPath);
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+            Object.DestroyImmediate(go);
+            return prefab;
         }
 
         private static TowerTier[] Tiers(

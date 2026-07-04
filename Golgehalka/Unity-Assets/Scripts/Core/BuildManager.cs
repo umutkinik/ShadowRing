@@ -84,6 +84,8 @@ namespace Golgehalka.Core
             tower.Init(selectedHero);
             tower.Node = node;
             node.Occupant = tower;
+            var nodeRenderer = node.GetComponent<Renderer>();
+            if (nodeRenderer != null) nodeRenderer.enabled = false; // platform kulenin altında kalmasın
             selectedHero = null; // yerleştirme sonrası seçim sıfırlanır
         }
     }
