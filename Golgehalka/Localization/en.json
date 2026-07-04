@@ -43,6 +43,10 @@
     "iap.tier.feast": "Coffee & cake",
     "iap.thanks": "Thank you, defender of the realm!",
     "iap.restore": "Restore Purchases",
-    "ads.loading": "Ad loading…"
+    "ads.loading": "Ad loading…",
+    "stat.damage": "Damage",
+    "stat.range": "Range",
+    "stat.rate": "Fire Rate",
+    "ui.close": "Close"
   }
 }

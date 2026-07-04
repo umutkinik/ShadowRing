@@ -43,6 +43,10 @@
     "iap.tier.feast": "Kaffee & Kuchen",
     "iap.thanks": "Danke, Verteidiger des Reiches!",
     "iap.restore": "Käufe wiederherstellen",
-    "ads.loading": "Werbung wird geladen…"
+    "ads.loading": "Werbung wird geladen…",
+    "stat.damage": "Schaden",
+    "stat.range": "Reichweite",
+    "stat.rate": "Feuerrate",
+    "ui.close": "Schließen"
   }
 }

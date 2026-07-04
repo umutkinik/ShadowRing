@@ -43,6 +43,10 @@
     "iap.tier.feast": "قهوة وكعكة",
     "iap.thanks": "شكرًا لك يا حامي المملكة!",
     "iap.restore": "استعادة المشتريات",
-    "ads.loading": "جارٍ تحميل الإعلان…"
+    "ads.loading": "جارٍ تحميل الإعلان…",
+    "stat.damage": "الضرر",
+    "stat.range": "المدى",
+    "stat.rate": "معدل الرمي",
+    "ui.close": "إغلاق"
   }
 }

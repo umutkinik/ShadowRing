@@ -43,6 +43,10 @@
     "iap.tier.feast": "咖啡加蛋糕",
     "iap.thanks": "感谢你，王国的守护者！",
     "iap.restore": "恢复购买",
-    "ads.loading": "广告加载中…"
+    "ads.loading": "广告加载中…",
+    "stat.damage": "伤害",
+    "stat.range": "射程",
+    "stat.rate": "射速",
+    "ui.close": "关闭"
   }
 }

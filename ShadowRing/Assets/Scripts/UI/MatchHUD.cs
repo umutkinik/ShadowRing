@@ -147,8 +147,8 @@ namespace Golgehalka.UI
             towerTitle.text = selectedTower.Hero.heroId + " — K" + (selectedTower.TierIndex + 1);
             towerInfo.text =
                 "DPS: " + (tier.damage * tier.fireRate).ToString("0.#") +
-                "\nHasar: " + tier.damage + "  Menzil: " + tier.range +
-                "\nAtış: " + tier.fireRate + "/sn";
+                "\n" + L("stat.damage") + ": " + tier.damage + "   " + L("stat.range") + ": " + tier.range +
+                "\n" + L("stat.rate") + ": " + tier.fireRate + "/s";
 
             if (selectedTower.CanUpgrade)
             {
@@ -224,7 +224,8 @@ namespace Golgehalka.UI
             {
                 int stars = GameManager.Instance.Lives >= 20 ? 3 :
                             GameManager.Instance.Lives >= 15 ? 2 : 1;
-                starsText.text = new string('★', stars) + new string('☆', 3 - stars);
+                // '*' her fontta var — ★ dinamik OS fontunda eksik olabiliyor (□ sorunu)
+                starsText.text = new string('*', stars) + new string('·', 3 - stars) + "   +20";
 
                 if (!victorySaved && waveManager.level != null)
                 {

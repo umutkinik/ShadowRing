@@ -43,6 +43,10 @@
     "iap.tier.feast": "Kahve + kek",
     "iap.thanks": "Teşekkürler, diyarın savunucusu!",
     "iap.restore": "Satın Alımları Geri Yükle",
-    "ads.loading": "Reklam yükleniyor…"
+    "ads.loading": "Reklam yükleniyor…",
+    "stat.damage": "Hasar",
+    "stat.range": "Menzil",
+    "stat.rate": "Atış Hızı",
+    "ui.close": "Kapat"
   }
 }

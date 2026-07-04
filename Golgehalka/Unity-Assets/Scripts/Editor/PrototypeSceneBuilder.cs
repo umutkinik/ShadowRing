@@ -395,7 +395,7 @@ namespace Golgehalka.EditorTools
             hud.upgradeButton = upBtn; hud.upgradeLabel = upLbl;
             var (sellBtn, sellLbl) = UIButton(tp, "Sell", "Sat", new Vector2(20, -98), new Vector2(320, 56), btnBg, null);
             hud.sellButton = sellBtn; hud.sellLabel = sellLbl;
-            var (closeBtn, _) = UIButton(tp, "Close", "✕", new Vector2(20, -162), new Vector2(320, 48), btnBg, null);
+            var (closeBtn, _) = UIButton(tp, "Close", "Kapat", new Vector2(20, -162), new Vector2(320, 48), btnBg, "ui.close");
             hud.towerCloseButton = closeBtn;
 
             return hud;
@@ -409,13 +409,15 @@ namespace Golgehalka.EditorTools
                 new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680, 400), new Color(0.04f, 0.04f, 0.08f, 0.88f));
 
             var title = UIText(panel, "Title", titleKey, 60, Vector2.zero, new Vector2(640, 90), TMPro.TextAlignmentOptions.Center);
-            title.rectTransform.anchoredPosition = new Vector2(0, 110);
             title.rectTransform.anchorMin = title.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            title.rectTransform.pivot = new Vector2(0.5f, 0.5f);   // pivot da merkez — kayma düzeltmesi
+            title.rectTransform.anchoredPosition = new Vector2(0, 110);
             var lt = title.gameObject.AddComponent<LocalizedText>();
             lt.key = titleKey;
 
             stars = UIText(panel, "Stars", "", 54, Vector2.zero, new Vector2(640, 80), TMPro.TextAlignmentOptions.Center);
             stars.rectTransform.anchorMin = stars.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            stars.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             stars.rectTransform.anchoredPosition = new Vector2(0, 20);
 
             var (b, _) = UIButton(panel, "Action", "▶", new Vector2(0, 0), new Vector2(300, 76), btnBg, "menu.play");
