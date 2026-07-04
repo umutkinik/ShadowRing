@@ -41,6 +41,18 @@ namespace Golgehalka.UI
         public TMP_Text starsText;
         public GameObject defeatPanel;
 
+        [Header("Kule paneli")]
+        public GameObject towerPanel;
+        public TMP_Text towerTitle;
+        public TMP_Text towerInfo;
+        public Button upgradeButton;
+        public TMP_Text upgradeLabel;
+        public Button sellButton;
+        public TMP_Text sellLabel;
+        public Button towerCloseButton;
+
+        private Combat.Tower selectedTower;
+
         private static readonly string[] Locales = { "en", "de", "ru", "zh-Hans", "hi", "ar", "tr" };
         private bool victorySaved;
 
@@ -88,9 +100,67 @@ namespace Golgehalka.UI
             defeatButton.onClick.AddListener(ReloadScene);
             langButtonLabel.text = LocalizationManager.CurrentLocale.ToUpperInvariant();
 
+            // Kule paneli
+            BuildManager.OnTowerTapped += ShowTowerPanel;
+            upgradeButton.onClick.AddListener(() =>
+            {
+                if (selectedTower != null && selectedTower.TryUpgrade()) RefreshTowerPanel();
+            });
+            sellButton.onClick.AddListener(() =>
+            {
+                if (selectedTower != null) selectedTower.Sell();
+                HideTowerPanel();
+            });
+            towerCloseButton.onClick.AddListener(HideTowerPanel);
+            EconomyManager.Instance.OnGoldChanged += _ =>
+            {
+                if (towerPanel.activeSelf) RefreshTowerPanel();
+            };
+            towerPanel.SetActive(false);
+
             victoryPanel.SetActive(false);
             defeatPanel.SetActive(false);
             RefreshStats();
+        }
+
+        private void OnDestroy() => BuildManager.OnTowerTapped -= ShowTowerPanel;
+
+        private void ShowTowerPanel(Combat.Tower tower)
+        {
+            selectedTower = tower;
+            towerPanel.SetActive(true);
+            RefreshTowerPanel();
+        }
+
+        private void HideTowerPanel()
+        {
+            selectedTower = null;
+            towerPanel.SetActive(false);
+        }
+
+        private void RefreshTowerPanel()
+        {
+            if (selectedTower == null) { HideTowerPanel(); return; }
+            System.Func<string, string> L = LocalizationManager.Get;
+            var tier = selectedTower.CurrentTier;
+
+            towerTitle.text = selectedTower.Hero.heroId + " — K" + (selectedTower.TierIndex + 1);
+            towerInfo.text =
+                "DPS: " + (tier.damage * tier.fireRate).ToString("0.#") +
+                "\nHasar: " + tier.damage + "  Menzil: " + tier.range +
+                "\nAtış: " + tier.fireRate + "/sn";
+
+            if (selectedTower.CanUpgrade)
+            {
+                upgradeLabel.text = L("shop.upgrade") + " (" + selectedTower.UpgradeCost + ")";
+                upgradeButton.interactable = EconomyManager.Instance.Gold >= selectedTower.UpgradeCost;
+            }
+            else
+            {
+                upgradeLabel.text = "MAX";
+                upgradeButton.interactable = false;
+            }
+            sellLabel.text = L("shop.sell") + " (+" + selectedTower.SellRefund + ")";
         }
 
         /// LiberationSans'ın kapsamadığı yazı sistemleri (Kiril vb.) için işletim
@@ -134,6 +204,9 @@ namespace Golgehalka.UI
             nextWaveButton.interactable =
                 GameManager.Instance.State == GameState.Preparing ||
                 GameManager.Instance.State == GameState.BetweenWaves;
+
+            // Seçili kule yok olduysa (harita değişimi vb.) paneli kapat
+            if (towerPanel.activeSelf && selectedTower == null) HideTowerPanel();
         }
 
         private void RefreshStats()

@@ -19,7 +19,13 @@ namespace Golgehalka.Combat
 
         public HeroDefinition Hero { get; private set; }
         public int TierIndex { get; private set; }
+        public TowerTier CurrentTier => Hero.tiers[TierIndex];
         private TowerTier Tier => Hero.tiers[TierIndex];
+
+        /// Kurulduğu platform — satışta boşaltmak için.
+        public Core.PlacementNode Node { get; set; }
+        /// Bu kuleye harcanan toplam altın (satış iadesi %60 bunun üzerinden).
+        public int TotalSpent { get; private set; }
 
         private float cooldown;
 
@@ -27,19 +33,31 @@ namespace Golgehalka.Combat
         {
             Hero = hero;
             TierIndex = 0;
+            TotalSpent = hero.tiers[0].cost;
             ApplyTierVisual();
         }
 
         public bool CanUpgrade => TierIndex < Hero.tiers.Length - 1;
         public int UpgradeCost => CanUpgrade ? Hero.tiers[TierIndex + 1].cost : 0;
+        public int SellRefund => Mathf.RoundToInt(TotalSpent * 0.6f); // balance-v1.md
 
         public bool TryUpgrade()
         {
-            if (!CanUpgrade || !Core.EconomyManager.Instance.TrySpend(UpgradeCost))
-                return false;
+            if (!CanUpgrade) return false;
+            int cost = UpgradeCost;
+            if (!Core.EconomyManager.Instance.TrySpend(cost)) return false;
+            TotalSpent += cost;
             TierIndex++;
             ApplyTierVisual();
             return true;
+        }
+
+        /// Kuleyi sat: %60 iade + platform boşalır.
+        public void Sell()
+        {
+            Core.EconomyManager.Instance.AddGold(SellRefund);
+            if (Node != null) Node.Occupant = null;
+            Destroy(gameObject);
         }
 
         private void ApplyTierVisual()

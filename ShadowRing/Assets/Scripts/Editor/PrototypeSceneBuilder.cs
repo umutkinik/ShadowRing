@@ -58,6 +58,38 @@ namespace Golgehalka.EditorTools
                 h.damageType = DamageType.Magic; h.projectileSpeed = 16f; // büyü zırh deler
                 h.tiers = Tiers(150, 15, 5f, 0.8f, 180, 25, 5.2f, 0.85f, 280, 42, 5.5f, 0.9f);
             });
+            // Kalan 6 kahraman — balance-v1.md taban statları
+            // (aura/taunt/krit/zehir yığını gibi özel mekanikler Faz 2'de eklenecek)
+            var kael = MakeHero("kael", new Color(0.3f, 0.45f, 0.3f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Physical; h.armorPenetration = 0.1f; h.projectileSpeed = 16f;
+                h.tiers = Tiers(120, 18, 3.5f, 1f, 140, 30, 4f, 1.05f, 220, 50, 4.5f, 1.1f);
+            });
+            var baldric = MakeHero("baldric", new Color(0.7f, 0.55f, 0.2f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Physical; h.projectileSpeed = 14f;
+                h.tiers = Tiers(90, 10, 2.5f, 0.9f, 110, 16, 2.8f, 0.95f, 180, 28, 3.2f, 1f);
+            });
+            var milo = MakeHero("milo", new Color(0.45f, 0.6f, 0.7f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Physical; h.projectileSpeed = 18f;
+                h.tiers = Tiers(100, 14, 3f, 1.2f, 120, 24, 3.4f, 1.3f, 200, 40, 3.8f, 1.4f);
+            });
+            var pip = MakeHero("pip", new Color(0.75f, 0.6f, 0.35f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Physical; h.projectileSpeed = 14f;
+                h.tiers = Tiers(80, 6, 3f, 1f, 100, 10, 3.3f, 1.05f, 160, 16, 3.6f, 1.1f);
+            });
+            var sylwen = MakeHero("sylwen", new Color(0.85f, 0.85f, 0.95f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Magic; h.projectileSpeed = 16f;
+                h.tiers = Tiers(140, 8, 5.5f, 0.8f, 170, 14, 5.8f, 0.85f, 260, 22, 6.2f, 0.9f);
+            });
+            var ravox = MakeHero("ravox", new Color(0.3f, 0.3f, 0.35f), projectilePrefab, h =>
+            {
+                h.damageType = DamageType.Poison; h.projectileSpeed = 18f; // zehir zırh deler
+                h.tiers = Tiers(130, 16, 4f, 1.1f, 150, 26, 4.4f, 1.15f, 240, 44, 4.8f, 1.2f);
+            });
 
             // ---- 4) ACT I — 6 BÖLÜM (balance-v1.md dalga tasarımı) ----
             SpawnEntry S(EnemyDefinition d, int n, float iv = 0.8f, float delay = 0.5f) =>
@@ -155,15 +187,16 @@ namespace Golgehalka.EditorTools
             bso.FindProperty("towerBasePrefab").objectReferenceValue = borin.towerPrefab;
             bso.ApplyModifiedPropertiesWithoutUndo();
 
-            var hud = BuildHUD(wave, build, new[] { borin, faelyn, elwin }, levels);
+            var hud = BuildHUD(wave, build,
+                new[] { borin, faelyn, elwin, kael, baldric, milo, pip, sylwen, ravox }, levels);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
 
-            bool ok = wave.level != null && wave.path != null && hud.heroes.Length == 3 && hud.levels.Length == 6;
+            bool ok = wave.level != null && wave.path != null && hud.heroes.Length == 9 && hud.levels.Length == 6;
             EditorUtility.DisplayDialog("Gölgehalka",
                 ok
-                    ? "Act I hazır ve doğrulandı ✓\n\n3 kahraman · 5 düşman tipi · 6 bölüm\n\n" +
-                      "Play → bölüm seç (B1-B6) → kahraman seç → platforma tıkla → Sonraki Dalga."
+                    ? "Act I hazır ve doğrulandı ✓\n\n9 kahraman · 5 düşman tipi · 6 bölüm · kule paneli\n\n" +
+                      "Play → bölüm seç → kahraman seç → platforma tıkla → kuleye dokunarak yükselt/sat."
                     : "DİKKAT: bazı referanslar atanamadı! Console'a bak.",
                 ok ? "Başlıyoruz!" : "Tamam");
         }
@@ -290,10 +323,24 @@ namespace Golgehalka.EditorTools
             // --- Üst bar ---
             var top = UIPanel(t, "TopBar", new Vector2(0, 1), new Vector2(1, 1),
                 new Vector2(0.5f, 1), Vector2.zero, new Vector2(0, 84), barBg);
-            hud.goldText = UIText(top, "Gold", "Altın: 0", 38, new Vector2(40, 0), new Vector2(360, 70), TMPro.TextAlignmentOptions.Left);
-            hud.livesText = UIText(top, "Lives", "Can: 20", 38, new Vector2(440, 0), new Vector2(300, 70), TMPro.TextAlignmentOptions.Left);
-            hud.waveText = UIText(top, "Wave", "Dalga: 0/0", 38, new Vector2(780, 0), new Vector2(360, 70), TMPro.TextAlignmentOptions.Left);
-            hud.levelText = UIText(top, "Level", "-", 38, new Vector2(1240, 0), new Vector2(500, 70), TMPro.TextAlignmentOptions.Left);
+            hud.goldText = UIText(top, "Gold", "Altın: 0", 36, new Vector2(30, 0), new Vector2(330, 70), TMPro.TextAlignmentOptions.Left);
+            hud.livesText = UIText(top, "Lives", "Can: 20", 36, new Vector2(380, 0), new Vector2(260, 70), TMPro.TextAlignmentOptions.Left);
+            hud.waveText = UIText(top, "Wave", "Dalga: 0/0", 36, new Vector2(660, 0), new Vector2(320, 70), TMPro.TextAlignmentOptions.Left);
+            hud.levelText = UIText(top, "Level", "-", 36, new Vector2(1010, 0), new Vector2(300, 70), TMPro.TextAlignmentOptions.Left);
+
+            // Hız + dil üst barda (alt bar 9 kahramana ayrıldı)
+            hud.speedButtons = new UnityEngine.UI.Button[3];
+            string[] speedLabels = { "1×", "2×", "3×" };
+            for (int i = 0; i < 3; i++)
+            {
+                var (sb, _) = UIButton(top, "Speed" + speedLabels[i], speedLabels[i],
+                    new Vector2(1370 + i * 106, 0), new Vector2(94, 62), btnBg, null);
+                hud.speedButtons[i] = sb;
+            }
+            var (langBtn, langLbl) = UIButton(top, "Lang", "EN",
+                new Vector2(1710, 0), new Vector2(104, 62), btnBg, null);
+            hud.langButton = langBtn;
+            hud.langButtonLabel = langLbl;
 
             // --- Bölüm seçici (ilk dalga öncesi) ---
             var lvlRow = UIPanel(t, "LevelRow", new Vector2(0, 1), new Vector2(1, 1),
@@ -312,32 +359,20 @@ namespace Golgehalka.EditorTools
                 new Vector2(0.5f, 0), Vector2.zero, new Vector2(0, 96), barBg);
 
             var (nextBtn, _) = UIButton(bottom, "NextWave", "Sonraki Dalga",
-                new Vector2(30, 0), new Vector2(330, 72), btnBg, "hud.next_wave");
+                new Vector2(30, 0), new Vector2(310, 72), btnBg, "hud.next_wave");
             hud.nextWaveButton = nextBtn;
 
+            // 9 kahraman — kompakt butonlar
             hud.heroButtons = new UnityEngine.UI.Button[heroes.Length];
             hud.heroButtonLabels = new TMPro.TMP_Text[heroes.Length];
             for (int i = 0; i < heroes.Length; i++)
             {
                 var (b, lbl) = UIButton(bottom, "Hero_" + heroes[i].heroId, heroes[i].heroId,
-                    new Vector2(400 + i * 260, 0), new Vector2(244, 72), btnBg, null);
+                    new Vector2(370 + i * 166, 0), new Vector2(158, 72), btnBg, null);
+                lbl.fontSize = 21;
                 hud.heroButtons[i] = b;
                 hud.heroButtonLabels[i] = lbl;
             }
-
-            hud.speedButtons = new UnityEngine.UI.Button[3];
-            string[] speedLabels = { "1×", "2×", "3×" };
-            for (int i = 0; i < 3; i++)
-            {
-                var (b, _) = UIButton(bottom, "Speed" + speedLabels[i], speedLabels[i],
-                    new Vector2(1230 + i * 110, 0), new Vector2(96, 72), btnBg, null);
-                hud.speedButtons[i] = b;
-            }
-
-            var (langBtn, langLbl) = UIButton(bottom, "Lang", "EN",
-                new Vector2(1590 + 0, 0), new Vector2(110, 72), btnBg, null);
-            hud.langButton = langBtn;
-            hud.langButtonLabel = langLbl;
 
             // --- Sonuç panelleri ---
             hud.victoryPanel = BuildResultPanel(t, "VictoryPanel", "game.victory",
@@ -348,6 +383,20 @@ namespace Golgehalka.EditorTools
             hud.defeatPanel = BuildResultPanel(t, "DefeatPanel", "game.defeat",
                 out _, out var dBtn, btnBg);
             hud.defeatButton = dBtn;
+
+            // --- Kule yükseltme/satma paneli (sağ orta) ---
+            var tp = UIPanel(t, "TowerPanel", new Vector2(1, 0.5f), new Vector2(1, 0.5f),
+                new Vector2(1, 0.5f), new Vector2(-16, 0), new Vector2(360, 420),
+                new Color(0.05f, 0.05f, 0.09f, 0.85f));
+            hud.towerPanel = tp.gameObject;
+            hud.towerTitle = UIText(tp, "Title", "-", 34, new Vector2(20, 165), new Vector2(320, 56), TMPro.TextAlignmentOptions.Left);
+            hud.towerInfo = UIText(tp, "Info", "-", 24, new Vector2(20, 75), new Vector2(320, 110), TMPro.TextAlignmentOptions.TopLeft);
+            var (upBtn, upLbl) = UIButton(tp, "Upgrade", "Yükselt", new Vector2(20, -30), new Vector2(320, 62), btnBg, null);
+            hud.upgradeButton = upBtn; hud.upgradeLabel = upLbl;
+            var (sellBtn, sellLbl) = UIButton(tp, "Sell", "Sat", new Vector2(20, -98), new Vector2(320, 56), btnBg, null);
+            hud.sellButton = sellBtn; hud.sellLabel = sellLbl;
+            var (closeBtn, _) = UIButton(tp, "Close", "✕", new Vector2(20, -162), new Vector2(320, 48), btnBg, null);
+            hud.towerCloseButton = closeBtn;
 
             return hud;
         }

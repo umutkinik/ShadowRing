@@ -1,35 +1,56 @@
+using System;
 using Golgehalka.Combat;
 using Golgehalka.Data;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Golgehalka.Core
 {
-    /// Yerleştirme akışı:
-    /// 1) UI'dan kahraman seç  2) boş node'a dokun/tıkla  3) altın yetiyorsa inşa et.
-    /// Editor + mobil ikisinde de çalışır (mouse fallback).
+    /// Dokunuş yönlendirme:
+    ///   kahraman seçiliyken boş platforma dokun → inşa et
+    ///   kahraman seçili değilken kuleye dokun → OnTowerTapped (yükseltme paneli açılır)
+    /// Editor + mobil ikisinde de çalışır; UI üzerindeki dokunuşlar yok sayılır.
     public class BuildManager : MonoBehaviour
     {
-        [SerializeField] private GameObject towerBasePrefab; // Tower bileşenli taban
+        [SerializeField] private GameObject towerBasePrefab; // yedek genel taban
+
+        /// MatchHUD panel açmak için dinler.
+        public static event Action<Tower> OnTowerTapped;
 
         private HeroDefinition selectedHero;
-
         public HeroDefinition SelectedHero => selectedHero;
 
-        /// Kahraman seçim panelinden çağrılır.
         public void SelectHero(HeroDefinition hero) => selectedHero = hero;
+        public void ClearSelection() => selectedHero = null;
 
         private void Update()
         {
-            if (selectedHero == null) return;
             if (!TryGetTapPosition(out Vector2 screenPos)) return;
+            if (IsPointerOverUI()) return; // HUD butonlarına dokunuş dünyaya geçmez
 
             Ray ray = Camera.main.ScreenPointToRay(screenPos);
             if (!Physics.Raycast(ray, out RaycastHit hit, 200f)) return;
 
+            // 1) İnşa: kahraman seçili + boş platform
             var node = hit.collider.GetComponent<PlacementNode>();
-            if (node == null || !node.IsEmpty) return;
+            if (node != null)
+            {
+                if (selectedHero != null && node.IsEmpty) TryBuild(node);
+                else if (!node.IsEmpty) OnTowerTapped?.Invoke(node.Occupant);
+                return;
+            }
 
-            TryBuild(node);
+            // 2) Seçim: kurulu kuleye (veya model çocuğuna) dokunuş
+            var tower = hit.collider.GetComponentInParent<Tower>();
+            if (tower != null) OnTowerTapped?.Invoke(tower);
+        }
+
+        private static bool IsPointerOverUI()
+        {
+            if (EventSystem.current == null) return false;
+            if (Input.touchCount > 0)
+                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+            return EventSystem.current.IsPointerOverGameObject();
         }
 
         /// Mobilde dokunuş, editor/masaüstünde sol tık.
@@ -57,11 +78,11 @@ namespace Golgehalka.Core
                 // UI: shop.not_enough_gold göster
                 return;
             }
-            // Kahramana özel prefab varsa onu, yoksa genel tabanı kullan
             var prefab = selectedHero.towerPrefab != null ? selectedHero.towerPrefab : towerBasePrefab;
             var go = Instantiate(prefab, node.transform.position, Quaternion.identity);
             var tower = go.GetComponent<Tower>();
             tower.Init(selectedHero);
+            tower.Node = node;
             node.Occupant = tower;
             selectedHero = null; // yerleştirme sonrası seçim sıfırlanır
         }
