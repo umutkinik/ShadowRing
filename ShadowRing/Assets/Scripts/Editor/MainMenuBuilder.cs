@@ -16,6 +16,12 @@ namespace Golgehalka.EditorTools
         [MenuItem("Gölgehalka/Ana Menü Kur")]
         public static void Build()
         {
+            if (EditorApplication.isPlaying)
+            {
+                EditorUtility.DisplayDialog("Gölgehalka",
+                    "Önce Play modundan çık (■ butonu), sonra sahneyi kur.", "Tamam");
+                return;
+            }
             PrototypeSceneBuilder.EnsureFolder("Assets", "Scenes");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 

@@ -21,4 +21,4 @@ MonoBehaviour:
   isBoss: 1
   goldReward: 200
   livesCost: 20
-  prefab: {fileID: 186364627131884176, guid: 9bcdca01be2a74051807812b7f881bef, type: 3}
+  prefab: {fileID: 7383893563222758026, guid: 9bcdca01be2a74051807812b7f881bef, type: 3}

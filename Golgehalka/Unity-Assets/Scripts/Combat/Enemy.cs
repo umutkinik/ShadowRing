@@ -29,6 +29,7 @@ namespace Golgehalka.Combat
         private int waypointIndex;
         private Transform model;        // prosedürel yürüyüş sallanması için
         private float bobPhase;
+        private Animation walkAnim;     // Meshy rig'inden gelen gerçek yürüyüş (varsa)
 
         private void OnEnable() => Active.Add(this);
         private void OnDisable() => Active.Remove(this);
@@ -37,6 +38,20 @@ namespace Golgehalka.Combat
         {
             model = transform.Find("Model");
             bobPhase = UnityEngine.Random.Range(0f, 6.28f); // sürüde senkron kırıcı rastgele faz
+
+            // Rigli model varsa iskelet animasyonunu döngüde oynat
+            walkAnim = GetComponentInChildren<Animation>();
+            if (walkAnim != null && walkAnim.GetClipCount() > 0)
+            {
+                foreach (AnimationState st in walkAnim)
+                {
+                    st.wrapMode = WrapMode.Loop;
+                    st.speed = UnityEngine.Random.Range(0.9f, 1.15f); // sürü senkron kırıcı
+                    walkAnim.Play(st.name);
+                    break;
+                }
+            }
+            else walkAnim = null;
         }
 
         public void Init(EnemyDefinition def, WaypointPath followPath)
@@ -65,9 +80,8 @@ namespace Golgehalka.Combat
                 transform.position, target, Def.moveSpeed * SpeedFactor * Time.deltaTime);
             transform.LookAt(target);
 
-            // Prosedürel yürüyüş: hıza bağlı iki yana sallanma + minik zıplama
-            // (Mixamo iskelet animasyonları gelene dek sahneyi canlı tutar)
-            if (model != null)
+            // Prosedürel yürüyüş — YALNIZCA iskelet animasyonu olmayanlarda
+            if (walkAnim == null && model != null)
             {
                 float t = Time.time * (4f + Def.moveSpeed * 2.5f) + bobPhase;
                 model.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(t) * 6f);

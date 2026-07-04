@@ -23,6 +23,12 @@ namespace Golgehalka.EditorTools
         [MenuItem("Gölgehalka/Prototip Sahne Kur")]
         public static void Build()
         {
+            if (EditorApplication.isPlaying)
+            {
+                EditorUtility.DisplayDialog("Gölgehalka",
+                    "Önce Play modundan çık (■ butonu), sonra sahneyi kur.", "Tamam");
+                return;
+            }
             EnsureFolder("Assets", "Data");
             EnsureFolder("Assets", "Prefabs");
             EnsureFolder("Assets", "Scenes");
@@ -387,10 +393,11 @@ namespace Golgehalka.EditorTools
                 go =>
                 {
                     go.AddComponent<Enemy>();
-                    // Ayak hizası: kapsül merkezi yolda y=0.1'de durur; -0.13 lokal ofset
-                    // model ayaklarını zemin üstüne (≈y=0.02) oturtur (-1 gömüyordu!)
-                    if (AttachModel(go, ModelDir + "/" + id + ".glb",
-                        new Vector3(0, -0.13f, 0), Vector3.one * (modelScale / 0.6f)))
+                    // Öncelik: Meshy rig'li yürüyen model → yoksa statik model → yoksa kapsül
+                    if (AttachModel(go, "Assets/Models/Rigged/" + id + "_walk.glb",
+                            new Vector3(0, -0.13f, 0), Vector3.one * (modelScale / 0.6f)) ||
+                        AttachModel(go, ModelDir + "/" + id + ".glb",
+                            new Vector3(0, -0.13f, 0), Vector3.one * (modelScale / 0.6f)))
                         go.GetComponent<MeshRenderer>().enabled = false;
                 });
 
