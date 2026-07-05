@@ -265,6 +265,14 @@ namespace Golgehalka.EditorTools
                 levels[i].decorPrefabs = i < 6 ? act1Decor : i < 12 ? act2Decor : act3Decor;
                 levels[i].decorCount = i < 6 ? 9 : 8;
                 levels[i].groundColor = groundTones[i];
+
+                // Boyanmış harita: Assets/Maps/level<1-6>.png varsa kullan
+                // (Act II ayna-X, Act III ayna-Z — 6 resim 18 bölümü karşılar)
+                int baseLayout = (i % 6) + 1;
+                levels[i].mapArt = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    "Assets/Maps/level" + baseLayout + ".png");
+                levels[i].mapFlipX = i >= 6 && i < 12;
+                levels[i].mapFlipZ = i >= 12;
                 EditorUtility.SetDirty(levels[i]);
             }
             AssetDatabase.SaveAssets();

@@ -43,6 +43,7 @@ namespace Golgehalka.Core
             }
             EnsureMaterials();
             Clear();
+            bool painted = level.mapArt != null; // boyanmış harita: yol/dekor resmin içinde
 
             // 1) Waypoint'ler
             var wps = new Transform[level.waypoints.Length];
@@ -56,7 +57,8 @@ namespace Golgehalka.Core
             }
             path.SetWaypoints(wps);
 
-            // 2) Yol şeritleri (dokulu) + köşe yumuşatma diskleri
+            // 2) Yol şeritleri (dokulu) + köşe yumuşatma diskleri — boyalı modda resim halleder
+            if (!painted)
             for (int i = 0; i < level.waypoints.Length - 1; i++)
             {
                 Vector3 a = level.waypoints[i], b = level.waypoints[i + 1];
@@ -70,6 +72,7 @@ namespace Golgehalka.Core
                 seg.transform.SetParent(path.transform);
                 spawned.Add(seg);
             }
+            if (!painted)
             for (int i = 1; i < level.waypoints.Length - 1; i++)
             {
                 var cap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -115,19 +118,38 @@ namespace Golgehalka.Core
                 spawned.Add(node);
             }
 
-            // 4) Tema: dokulu zemin + bölüm tonu + dekor + orman sınırı
-            if (groundRenderer != null)
+            // 4) Zemin: boyanmış harita varsa tek resim, yoksa doku+dekor+orman
+            if (painted)
             {
-                var gm = groundRenderer.material; // instance
-                if (groundTexture != null)
-                {
-                    gm.mainTexture = groundTexture;
-                    gm.mainTextureScale = new Vector2(9f, 6f);
-                }
-                gm.color = Color.Lerp(Color.white, level.groundColor, 0.35f);
+                if (groundRenderer != null) groundRenderer.enabled = false;
+                var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                quad.name = "PaintedMap";
+                Destroy(quad.GetComponent<Collider>());
+                quad.transform.rotation = Quaternion.Euler(90, 0, 0);
+                quad.transform.position = new Vector3(0, 0.02f, 0);
+                quad.transform.localScale = new Vector3(
+                    28f * (level.mapFlipX ? -1f : 1f), 20f * (level.mapFlipZ ? -1f : 1f), 1f);
+                var mat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                mat.mainTexture = level.mapArt;
+                quad.GetComponent<Renderer>().sharedMaterial = mat;
+                spawned.Add(quad);
             }
-            ScatterDecor(level);
-            PlantBorderForest(level);
+            else
+            {
+                if (groundRenderer != null)
+                {
+                    groundRenderer.enabled = true;
+                    var gm = groundRenderer.material; // instance
+                    if (groundTexture != null)
+                    {
+                        gm.mainTexture = groundTexture;
+                        gm.mainTextureScale = new Vector2(9f, 6f);
+                    }
+                    gm.color = Color.Lerp(Color.white, level.groundColor, 0.35f);
+                }
+                ScatterDecor(level);
+                PlantBorderForest(level);
+            }
         }
 
         /// Harita kenarını ağaç kuşağıyla sar — "boşlukta yüzen zemin" hissini bitirir.

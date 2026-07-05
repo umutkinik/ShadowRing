@@ -38,5 +38,10 @@ namespace Golgehalka.Data
         public GameObject[] decorPrefabs;               // serpiştirilecek çevre modelleri
         public int decorCount = 10;
         public Color groundColor = new Color(0.25f, 0.32f, 0.22f);
+
+        [Header("Boyanmış harita (Kingdom Rush modu) — varsa zemin/yol/dekor yerine geçer")]
+        public Texture2D mapArt;
+        public bool mapFlipX;   // Act II ayna varyantı
+        public bool mapFlipZ;   // Act III ayna varyantı
     }
 }
