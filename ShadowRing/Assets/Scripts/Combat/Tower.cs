@@ -85,8 +85,7 @@ namespace Golgehalka.Combat
             if (Node != null)
             {
                 Node.Occupant = null;
-                var r = Node.GetComponent<Renderer>();
-                if (r != null) r.enabled = true;
+                Node.SetVisualVisible(true);
             }
             Destroy(gameObject);
         }

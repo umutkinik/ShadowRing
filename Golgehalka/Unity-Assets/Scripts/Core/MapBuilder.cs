@@ -15,6 +15,7 @@ namespace Golgehalka.Core
         public Renderer groundRenderer;  // bölüm rengine boyanır
         public Texture2D groundTexture;  // çim (CC0 Poly Haven)
         public Texture2D pathTexture;    // toprak (CC0 Poly Haven)
+        public GameObject nodeModel;     // boş yuva görseli (taş platform)
 
         private readonly List<GameObject> spawned = new List<GameObject>();
         private Material pathMat, nodeMat;
@@ -81,19 +82,36 @@ namespace Golgehalka.Core
                 spawned.Add(cap);
             }
 
-            // 3) Kule platformları — taş yuva diskleri
+            // 3) Kule yuvaları — soluk taş platform (model yoksa disk)
             foreach (Vector3 p in level.nodePositions)
             {
-                var node = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                node.name = "Node";
+                var node = new GameObject("Node");
                 node.transform.position = p;
-                node.transform.localScale = new Vector3(1.5f, 0.07f, 1.5f);
-                node.GetComponent<Renderer>().sharedMaterial = nodeMat;
-                // İnce diske dokunmak zor — geniş görünmez tıklama hacmi ekle
-                Destroy(node.GetComponent<Collider>());
                 var box = node.AddComponent<BoxCollider>();
-                box.size = new Vector3(0.95f, 8f, 0.95f);
-                node.AddComponent<PlacementNode>();
+                box.size = new Vector3(1.4f, 2.5f, 1.4f);
+                box.center = new Vector3(0, 0.5f, 0);
+                var pn = node.AddComponent<PlacementNode>();
+
+                GameObject visual;
+                if (nodeModel != null)
+                {
+                    visual = Instantiate(nodeModel, node.transform);
+                    visual.transform.localPosition = new Vector3(0, -0.12f, 0);
+                    visual.transform.localScale = Vector3.one * 0.62f;
+                    // Soluk/yosunlu ton: boş yuva, kurulmuş platformdan ayrışsın
+                    foreach (var r in visual.GetComponentsInChildren<Renderer>())
+                        r.material.color = new Color(0.62f, 0.65f, 0.6f);
+                }
+                else
+                {
+                    visual = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    Destroy(visual.GetComponent<Collider>());
+                    visual.transform.SetParent(node.transform, false);
+                    visual.transform.localScale = new Vector3(1.5f, 0.07f, 1.5f);
+                    visual.GetComponent<Renderer>().sharedMaterial = nodeMat;
+                }
+                visual.name = "NodeVisual";
+                pn.visual = visual;
                 spawned.Add(node);
             }
 
@@ -137,8 +155,18 @@ namespace Golgehalka.Core
                 var deco = Instantiate(trees, new Vector3(x, 0, z),
                     Quaternion.Euler(0, (float)(rng.NextDouble() * 360), 0));
                 deco.transform.localScale = Vector3.one * (0.9f + (float)rng.NextDouble() * 0.7f);
+                TintDecor(deco, rng);
                 spawned.Add(deco);
             }
+        }
+
+        /// Neon parlaklığı kır: dekorları zemin dokusuna uyan koyu-yosunlu tonlara çek.
+        private static void TintDecor(GameObject deco, System.Random rng)
+        {
+            float v = 0.60f + (float)rng.NextDouble() * 0.16f; // her örnekte farklı koyuluk
+            var tint = new Color(v * 0.95f, v, v * 0.82f);      // hafif zeytin eğilimi
+            foreach (var r in deco.GetComponentsInChildren<Renderer>())
+                r.material.color = tint;
         }
 
         /// Çevre modellerini yoldan/platformlardan uzağa, bölüm başına
@@ -168,6 +196,7 @@ namespace Golgehalka.Core
                 var deco = Instantiate(prefab, pos, Quaternion.Euler(0, (float)(rng.NextDouble() * 360), 0));
                 float s = 0.8f + (float)rng.NextDouble() * 0.5f; // boyut çeşitliliği
                 deco.transform.localScale = Vector3.one * s;
+                TintDecor(deco, rng);
                 spawned.Add(deco);
                 placed++;
             }

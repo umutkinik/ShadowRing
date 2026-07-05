@@ -330,6 +330,7 @@ namespace Golgehalka.EditorTools
             mapBuilder.groundRenderer = ground.GetComponent<Renderer>();
             mapBuilder.groundTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/grass_diff.jpg");
             mapBuilder.pathTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/dirt_diff.jpg");
+            mapBuilder.nodeModel = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Env/tier1_base.glb");
 
             var wave = mgr.AddComponent<WaveManager>();
             wave.level = levels[0];
