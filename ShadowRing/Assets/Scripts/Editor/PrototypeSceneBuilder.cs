@@ -637,6 +637,29 @@ namespace Golgehalka.EditorTools
 
             // Bölüm seçici kaldırıldı — kampanya profildeki ilerlemeye göre sırayla akar
 
+            // --- Boss can barı (üst bar altında, boss sahnedeyken görünür) ---
+            var bossPanel = UIPanel(t, "BossPanel", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f), new Vector2(0, -96), new Vector2(760, 56),
+                new Color(0.05f, 0.03f, 0.05f, 0.85f));
+            var bossFillGO = new GameObject("Fill", typeof(UnityEngine.UI.Image));
+            bossFillGO.transform.SetParent(bossPanel, false);
+            var bfr = bossFillGO.GetComponent<RectTransform>();
+            bfr.anchorMin = Vector2.zero;
+            bfr.anchorMax = new Vector2(1f, 1f);
+            bfr.offsetMin = new Vector2(5, 5);
+            bfr.offsetMax = new Vector2(-5, -5);
+            bossFillGO.GetComponent<UnityEngine.UI.Image>().color = new Color(0.72f, 0.12f, 0.1f, 0.95f);
+            var bossNameTxt = UIText(bossPanel, "Name", "BOSS", 30,
+                new Vector2(0, 0), new Vector2(740, 48), TMPro.TextAlignmentOptions.Center);
+            bossNameTxt.rectTransform.anchorMin = Vector2.zero;
+            bossNameTxt.rectTransform.anchorMax = Vector2.one;
+            bossNameTxt.rectTransform.offsetMin = Vector2.zero;
+            bossNameTxt.rectTransform.offsetMax = Vector2.zero;
+            hud.bossPanel = bossPanel.gameObject;
+            hud.bossFill = bfr;
+            hud.bossName = bossNameTxt;
+            bossPanel.gameObject.SetActive(false);
+
             // --- Alt bar ---
             var bottom = UIPanel(t, "BottomBar", new Vector2(0, 0), new Vector2(1, 0),
                 new Vector2(0.5f, 0), Vector2.zero, new Vector2(0, 96), barBg);

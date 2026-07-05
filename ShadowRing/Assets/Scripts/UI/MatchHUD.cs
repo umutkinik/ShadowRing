@@ -39,6 +39,11 @@ namespace Golgehalka.UI
         public TMP_Text starsText;
         public GameObject defeatPanel;
 
+        [Header("Boss barı")]
+        public GameObject bossPanel;
+        public TMP_Text bossName;
+        public RectTransform bossFill;
+
         [Header("Kule paneli")]
         public GameObject towerPanel;
         public TMP_Text towerTitle;
@@ -210,6 +215,37 @@ namespace Golgehalka.UI
 
             // Seçili kule yok olduysa (harita değişimi vb.) paneli kapat
             if (towerPanel.activeSelf && selectedTower == null) HideTowerPanel();
+
+            UpdateBossBar();
+        }
+
+        /// Sahnedeki en güçlü boss'un canını ekran üstünde göster.
+        private void UpdateBossBar()
+        {
+            if (bossPanel == null) return;
+
+            Combat.Enemy boss = null;
+            foreach (var e in Combat.Enemy.Active)
+                if (e != null && e.IsAlive && e.Def != null && e.Def.isBoss &&
+                    (boss == null || e.Def.maxHealth > boss.Def.maxHealth))
+                    boss = e;
+
+            if (boss == null)
+            {
+                if (bossPanel.activeSelf) bossPanel.SetActive(false);
+                return;
+            }
+            if (!bossPanel.activeSelf) bossPanel.SetActive(true);
+
+            // "stone_behemoth" → "Stone Behemoth"
+            string[] parts = boss.Def.enemyId.Split('_');
+            for (int i = 0; i < parts.Length; i++)
+                if (parts[i].Length > 0)
+                    parts[i] = char.ToUpperInvariant(parts[i][0]) + parts[i].Substring(1);
+            bossName.text = string.Join(" ", parts);
+
+            float pct = Mathf.Clamp01(boss.Health / boss.Def.maxHealth);
+            bossFill.anchorMax = new Vector2(pct, 1f);
         }
 
         private void RefreshStats()

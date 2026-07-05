@@ -37,6 +37,11 @@ namespace Golgehalka.Combat
 
         private float modelBaseY; // otomatik zemin hizalamasından gelen taban yükseklik
 
+        // Baş üstü can çubuğu (hasar alınca görünür)
+        private Transform hpRoot;
+        private Transform hpFill;
+        private static Camera cam;
+
         private void Awake()
         {
             model = transform.Find("Model");
@@ -67,6 +72,55 @@ namespace Golgehalka.Combat
                 }
             }
             else walkAnim = null;
+
+            CreateHpBar();
+        }
+
+        /// Basit dünya-uzayı can çubuğu: koyu zemin + kırmızı dolgu, kameraya döner.
+        private void CreateHpBar()
+        {
+            if (cam == null) cam = Camera.main;
+            float w = Def.isBoss ? 1.7f : 0.9f;
+            float yOff = (Def.isBoss ? 3.2f : 1.9f) / 0.6f; // kapsül ölçek telafisi
+
+            var root = new GameObject("HP");
+            root.transform.SetParent(transform, false);
+            root.transform.localPosition = Vector3.up * yOff;
+            root.transform.localScale = Vector3.one / 0.6f;
+            hpRoot = root.transform;
+
+            var bg = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            Destroy(bg.GetComponent<Collider>());
+            bg.transform.SetParent(root.transform, false);
+            bg.transform.localScale = new Vector3(w, 0.14f, 1);
+            var bgMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+            { color = new Color(0.05f, 0.04f, 0.06f, 0.9f) };
+            bg.GetComponent<Renderer>().sharedMaterial = bgMat;
+
+            var fill = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            Destroy(fill.GetComponent<Collider>());
+            fill.transform.SetParent(root.transform, false);
+            fill.transform.localPosition = new Vector3(0, 0, -0.01f);
+            fill.transform.localScale = new Vector3(w - 0.06f, 0.09f, 1);
+            var fillMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+            { color = new Color(0.85f, 0.18f, 0.15f) };
+            fill.GetComponent<Renderer>().sharedMaterial = fillMat;
+            hpFill = fill.transform;
+
+            hpRoot.gameObject.SetActive(false); // tam candayken gizli
+        }
+
+        private void UpdateHpBar()
+        {
+            if (hpRoot == null) return;
+            float pct = Mathf.Clamp01(Health / Def.maxHealth);
+            hpRoot.gameObject.SetActive(IsAlive && pct < 0.999f);
+            if (hpFill != null)
+            {
+                float w = (Def.isBoss ? 1.7f : 0.9f) - 0.06f;
+                var s = hpFill.localScale; s.x = w * pct; hpFill.localScale = s;
+                var p = hpFill.localPosition; p.x = -w * (1f - pct) * 0.5f; hpFill.localPosition = p;
+            }
         }
 
         /// Uçan birimler yolun 1.5 birim üzerinde süzülür.
@@ -77,6 +131,10 @@ namespace Golgehalka.Combat
         {
             if (!IsAlive || path == null) return;
             MoveAlongPath();
+
+            // Can çubuğu kameraya bakar
+            if (hpRoot != null && hpRoot.gameObject.activeSelf && cam != null)
+                hpRoot.rotation = cam.transform.rotation;
         }
 
         private void MoveAlongPath()
@@ -130,6 +188,7 @@ namespace Golgehalka.Combat
                 ? Def.armor * (1f - armorPen)
                 : 0f; // büyü/zehir/ateş zırhı deler
             Health -= amount * (1f - effectiveArmor);
+            UpdateHpBar();
             if (Health <= 0f) Die();
         }
 
