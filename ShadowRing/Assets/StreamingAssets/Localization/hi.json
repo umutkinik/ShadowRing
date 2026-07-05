@@ -47,6 +47,7 @@
     "stat.damage": "क्षति",
     "stat.range": "सीमा",
     "stat.rate": "दर",
-    "ui.close": "बंद करें"
+    "ui.close": "बंद करें",
+    "ui.reset_progress": "प्रगति रीसेट करें"
   }
 }

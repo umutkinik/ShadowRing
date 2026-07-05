@@ -47,6 +47,7 @@
     "stat.damage": "Урон",
     "stat.range": "Дальность",
     "stat.rate": "Темп",
-    "ui.close": "Закрыть"
+    "ui.close": "Закрыть",
+    "ui.reset_progress": "Сбросить прогресс"
   }
 }

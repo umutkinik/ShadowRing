@@ -47,6 +47,7 @@
     "stat.damage": "Hasar",
     "stat.range": "Menzil",
     "stat.rate": "Atış Hızı",
-    "ui.close": "Kapat"
+    "ui.close": "Kapat",
+    "ui.reset_progress": "İlerlemeyi Sıfırla"
   }
 }

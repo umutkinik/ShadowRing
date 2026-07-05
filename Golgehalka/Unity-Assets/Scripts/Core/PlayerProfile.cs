@@ -78,6 +78,15 @@ namespace Golgehalka.Core
             return p;
         }
 
+        /// Kampanya ilerlemesini sıfırla (kahraman kilidi/ayarlara dokunmaz).
+        public static void ResetProgress()
+        {
+            Data.completedLevels.Clear();
+            Data.stars.Clear();
+            Data.shards = 0;
+            Save();
+        }
+
         // ---- Bölüm ilerlemesi ----
         public static bool IsCompleted(string levelId) => Data.completedLevels.Contains(levelId);
 

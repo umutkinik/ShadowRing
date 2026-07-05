@@ -228,6 +228,38 @@ namespace Golgehalka.EditorTools
                 Vector2.zero, new Vector2(300, 66), btnBg, null);
             Center(credB.GetComponent<RectTransform>(), new Vector2(0, 92));
 
+            // İlerleme sıfırlama (sol alt köşe — yanlışlıkla basılmasın)
+            var (resetB, resetLbl) = PrototypeSceneBuilder.UIButton(t, "Reset", "Reset",
+                Vector2.zero, new Vector2(300, 56), btnBg, "ui.reset_progress");
+            var resetRt = resetB.GetComponent<RectTransform>();
+            resetRt.anchorMin = resetRt.anchorMax = new Vector2(0f, 0f);
+            resetRt.pivot = new Vector2(0f, 0f);
+            resetRt.anchoredPosition = new Vector2(24, 24);
+            resetLbl.fontSize = 24;
+            ctrl.resetButton = resetB;
+            ctrl.resetLabel = resetLbl;
+
+            // Dil açılır listesi — dil butonunun yanında dikey panel
+            string[] nativeNames = { "English", "Deutsch", "Русский", "简体中文", "हिन्दी", "العربية", "Türkçe" };
+            var langPanel = PrototypeSceneBuilder.UIPanel(t, "LangPanel",
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 0f),
+                new Vector2(170, 150), new Vector2(280, 7 * 62 + 20),
+                new Color(0.04f, 0.03f, 0.06f, 0.95f));
+            ctrl.langPanel = langPanel.gameObject;
+            ctrl.langOptions = new UnityEngine.UI.Button[nativeNames.Length];
+            for (int i = 0; i < nativeNames.Length; i++)
+            {
+                var (ob, ol) = PrototypeSceneBuilder.UIButton(langPanel, "Lang_" + i, nativeNames[i],
+                    new Vector2(14, 0), new Vector2(252, 54), new Color(0.12f, 0.09f, 0.14f, 0.9f), null);
+                var ort = ob.GetComponent<RectTransform>();
+                ort.anchorMin = new Vector2(0, 1); ort.anchorMax = new Vector2(0, 1);
+                ort.pivot = new Vector2(0, 1);
+                ort.anchoredPosition = new Vector2(14, -10 - i * 62);
+                ol.fontSize = 26;
+                ctrl.langOptions[i] = ob;
+            }
+            langPanel.gameObject.SetActive(false);
+
             ctrl.playButton = playB;
             ctrl.creditsButton = credB;
 

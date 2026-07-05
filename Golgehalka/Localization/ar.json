@@ -47,6 +47,7 @@
     "stat.damage": "الضرر",
     "stat.range": "المدى",
     "stat.rate": "معدل الرمي",
-    "ui.close": "إغلاق"
+    "ui.close": "إغلاق",
+    "ui.reset_progress": "إعادة تعيين التقدم"
   }
 }

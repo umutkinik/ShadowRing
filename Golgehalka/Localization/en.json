@@ -47,6 +47,7 @@
     "stat.damage": "Damage",
     "stat.range": "Range",
     "stat.rate": "Fire Rate",
-    "ui.close": "Close"
+    "ui.close": "Close",
+    "ui.reset_progress": "Reset Progress"
   }
 }

@@ -11,8 +11,12 @@ namespace Golgehalka.UI
     public class MainMenuController : MonoBehaviour
     {
         public Button playButton;
-        public Button langButton;
+        public Button langButton;          // açılır dil listesini açar/kapar
         public TMP_Text langLabel;
+        public GameObject langPanel;       // 7 dilin dikey listesi
+        public Button[] langOptions;       // Locales sırasıyla
+        public Button resetButton;         // kampanya ilerlemesini sıfırlar
+        public TMP_Text resetLabel;
         public Button creditsButton;
         public GameObject creditsPanel;
         public Button creditsCloseButton;
@@ -52,7 +56,36 @@ namespace Golgehalka.UI
             langLabel.text = LocalizationManager.CurrentLocale.ToUpperInvariant();
 
             playButton.onClick.AddListener(() => SceneManager.LoadScene("Prototype"));
-            langButton.onClick.AddListener(CycleLanguage);
+
+            // Dil: açılır liste (7 dil, kendi adlarıyla)
+            if (langPanel != null && langOptions != null && langOptions.Length == Locales.Length)
+            {
+                langButton.onClick.AddListener(() => langPanel.SetActive(!langPanel.activeSelf));
+                for (int i = 0; i < langOptions.Length; i++)
+                {
+                    int idx = i;
+                    langOptions[i].onClick.AddListener(() =>
+                    {
+                        LocalizationManager.SetLocale(Locales[idx]);
+                        langLabel.text = LocalizationManager.CurrentLocale.ToUpperInvariant();
+                        langPanel.SetActive(false);
+                    });
+                }
+                langPanel.SetActive(false);
+            }
+            else
+            {
+                langButton.onClick.AddListener(CycleLanguage); // eski davranışa düşüş
+            }
+
+            // Kampanya sıfırlama — kısa görsel onay verir
+            if (resetButton != null)
+                resetButton.onClick.AddListener(() =>
+                {
+                    PlayerProfile.ResetProgress();
+                    if (resetLabel != null) StartCoroutine(ResetFeedback());
+                });
+
             creditsButton.onClick.AddListener(() => creditsPanel.SetActive(true));
             creditsCloseButton.onClick.AddListener(() => creditsPanel.SetActive(false));
             creditsPanel.SetActive(false);
@@ -64,6 +97,14 @@ namespace Golgehalka.UI
         {
             if (zarok != null)
                 zarok.Rotate(0, 4f * Time.deltaTime, 0); // heybetli vitrin dönüşü
+        }
+
+        private System.Collections.IEnumerator ResetFeedback()
+        {
+            string orig = resetLabel.text;
+            resetLabel.text = "OK!";
+            yield return new WaitForSeconds(1.1f);
+            resetLabel.text = orig;
         }
 
         private void CycleLanguage()

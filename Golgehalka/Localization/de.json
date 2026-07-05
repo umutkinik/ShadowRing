@@ -47,6 +47,7 @@
     "stat.damage": "Schaden",
     "stat.range": "Reichweite",
     "stat.rate": "Feuerrate",
-    "ui.close": "Schließen"
+    "ui.close": "Schließen",
+    "ui.reset_progress": "Fortschritt zurücksetzen"
   }
 }

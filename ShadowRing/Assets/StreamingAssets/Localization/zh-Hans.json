@@ -47,6 +47,7 @@
     "stat.damage": "伤害",
     "stat.range": "射程",
     "stat.rate": "射速",
-    "ui.close": "关闭"
+    "ui.close": "关闭",
+    "ui.reset_progress": "重置进度"
   }
 }
