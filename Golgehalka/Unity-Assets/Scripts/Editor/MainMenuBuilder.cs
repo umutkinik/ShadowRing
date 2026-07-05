@@ -127,7 +127,7 @@ namespace Golgehalka.EditorTools
             // --- UI ---
             new GameObject("EventSystem",
                 typeof(UnityEngine.EventSystems.EventSystem),
-                typeof(UnityEngine.EventSystems.StandaloneInputModule));
+                typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
 
             var canvasGO = new GameObject("MenuCanvas",
                 typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));

@@ -3,6 +3,7 @@ using Golgehalka.Combat;
 using Golgehalka.Data;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace Golgehalka.Core
 {
@@ -47,23 +48,25 @@ namespace Golgehalka.Core
 
         private static bool IsPointerOverUI()
         {
-            if (EventSystem.current == null) return false;
-            if (Input.touchCount > 0)
-                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
-            return EventSystem.current.IsPointerOverGameObject();
+            // InputSystemUIInputModule tüm işaretçileri (fare + dokunuş) kapsar
+            return EventSystem.current != null &&
+                   EventSystem.current.IsPointerOverGameObject();
         }
 
-        /// Mobilde dokunuş, editor/masaüstünde sol tık.
+        /// Mobilde dokunuş, editor/masaüstünde sol tık — YENİ Input System.
+        /// (Eski Input Manager kullanılmıyor → deprecation uyarısı biter.)
         private static bool TryGetTapPosition(out Vector2 pos)
         {
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            var touch = Touchscreen.current;
+            if (touch != null && touch.primaryTouch.press.wasPressedThisFrame)
             {
-                pos = Input.GetTouch(0).position;
+                pos = touch.primaryTouch.position.ReadValue();
                 return true;
             }
-            if (Input.GetMouseButtonDown(0))
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
             {
-                pos = Input.mousePosition;
+                pos = mouse.position.ReadValue();
                 return true;
             }
             pos = default;
