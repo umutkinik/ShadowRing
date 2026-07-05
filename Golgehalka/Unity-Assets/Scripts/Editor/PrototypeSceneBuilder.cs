@@ -721,17 +721,18 @@ namespace Golgehalka.EditorTools
             AddFrame((RectTransform)hud.defeatPanel.transform, panelFrame);
 
             // --- Kule yükseltme/satma paneli (sağ orta) ---
+            // 360×470 + içerik her kenardan 40 içeride — çerçeve rayları metni örtmez
             var tp = UIPanel(t, "TowerPanel", new Vector2(1, 0.5f), new Vector2(1, 0.5f),
-                new Vector2(1, 0.5f), new Vector2(-16, 0), new Vector2(360, 420),
+                new Vector2(1, 0.5f), new Vector2(-16, 0), new Vector2(360, 470),
                 new Color(0.05f, 0.05f, 0.09f, 0.85f));
             hud.towerPanel = tp.gameObject;
-            hud.towerTitle = UIText(tp, "Title", "-", 34, new Vector2(20, 165), new Vector2(320, 56), TMPro.TextAlignmentOptions.Left);
-            hud.towerInfo = UIText(tp, "Info", "-", 24, new Vector2(20, 75), new Vector2(320, 110), TMPro.TextAlignmentOptions.TopLeft);
-            var (upBtn, upLbl) = UIButton(tp, "Upgrade", "Yükselt", new Vector2(20, -30), new Vector2(320, 62), btnBg, null);
+            hud.towerTitle = UIText(tp, "Title", "-", 32, new Vector2(40, 150), new Vector2(280, 56), TMPro.TextAlignmentOptions.Left);
+            hud.towerInfo = UIText(tp, "Info", "-", 24, new Vector2(40, 60), new Vector2(280, 110), TMPro.TextAlignmentOptions.TopLeft);
+            var (upBtn, upLbl) = UIButton(tp, "Upgrade", "Yükselt", new Vector2(40, -35), new Vector2(280, 62), btnBg, null);
             hud.upgradeButton = upBtn; hud.upgradeLabel = upLbl;
-            var (sellBtn, sellLbl) = UIButton(tp, "Sell", "Sat", new Vector2(20, -98), new Vector2(320, 56), btnBg, null);
+            var (sellBtn, sellLbl) = UIButton(tp, "Sell", "Sat", new Vector2(40, -100), new Vector2(280, 56), btnBg, null);
             hud.sellButton = sellBtn; hud.sellLabel = sellLbl;
-            var (closeBtn, _) = UIButton(tp, "Close", "Kapat", new Vector2(20, -162), new Vector2(320, 48), btnBg, "ui.close");
+            var (closeBtn, _) = UIButton(tp, "Close", "Kapat", new Vector2(40, -160), new Vector2(280, 48), btnBg, "ui.close");
             hud.towerCloseButton = closeBtn;
             AddFrame(tp, panelFrame);
 
@@ -742,26 +743,29 @@ namespace Golgehalka.EditorTools
             Transform parent, string name, string titleKey,
             out TMPro.TMP_Text stars, out UnityEngine.UI.Button button, Color btnBg)
         {
+            // 760×460: çerçeve raylarının iç sınırı ±150 civarı — içerik o kutuda kalır
             var panel = UIPanel(parent, name, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680, 400), new Color(0.04f, 0.04f, 0.08f, 0.88f));
+                new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(760, 460), new Color(0.04f, 0.04f, 0.08f, 0.88f));
 
-            var title = UIText(panel, "Title", titleKey, 60, Vector2.zero, new Vector2(640, 90), TMPro.TextAlignmentOptions.Center);
+            var title = UIText(panel, "Title", titleKey, 60, Vector2.zero, new Vector2(560, 90), TMPro.TextAlignmentOptions.Center);
             title.rectTransform.anchorMin = title.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
             title.rectTransform.pivot = new Vector2(0.5f, 0.5f);   // pivot da merkez — kayma düzeltmesi
-            title.rectTransform.anchoredPosition = new Vector2(0, 110);
+            title.rectTransform.anchoredPosition = new Vector2(0, 100);
+            title.enableAutoSizing = true;                          // uzun çevirilerde kutuya sığ
+            title.fontSizeMin = 30; title.fontSizeMax = 60;
             var lt = title.gameObject.AddComponent<LocalizedText>();
             lt.key = titleKey;
 
-            stars = UIText(panel, "Stars", "", 54, Vector2.zero, new Vector2(640, 80), TMPro.TextAlignmentOptions.Center);
+            stars = UIText(panel, "Stars", "", 54, Vector2.zero, new Vector2(560, 80), TMPro.TextAlignmentOptions.Center);
             stars.rectTransform.anchorMin = stars.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
             stars.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            stars.rectTransform.anchoredPosition = new Vector2(0, 20);
+            stars.rectTransform.anchoredPosition = new Vector2(0, 10);
 
             var (b, _) = UIButton(panel, "Action", "Play", new Vector2(0, 0), new Vector2(300, 76), btnBg, "menu.play");
             var brt = b.GetComponent<RectTransform>();
             brt.anchorMin = brt.anchorMax = new Vector2(0.5f, 0.5f);
             brt.pivot = new Vector2(0.5f, 0.5f);
-            brt.anchoredPosition = new Vector2(0, -110);
+            brt.anchoredPosition = new Vector2(0, -100);
             button = b;
 
             return panel.gameObject;

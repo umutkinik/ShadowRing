@@ -276,6 +276,8 @@ namespace Golgehalka.EditorTools
             var panel = PrototypeSceneBuilder.UIPanel(t, "CreditsPanel",
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(1000, 560), new Color(0.03f, 0.025f, 0.05f, 0.94f));
+            // Çerçevenin İÇ güvenli kutusu: raylar+köşe süsleri ~150 birim —
+            // metin bloğu her kenardan o kadar içeride başlar
             var credText = PrototypeSceneBuilder.UIText(panel, "Text",
                 "SHADOWRING — The Sundered Realm\n\n" +
                 "Oyun Tasarımı & Geliştirme: UMUT KINIK\n\n" +
@@ -284,8 +286,10 @@ namespace Golgehalka.EditorTools
                 "Dokular: Poly Haven (CC0)\n" +
                 "3D Modeller: Meshy AI ile üretildi\n" +
                 "Ses Efektleri: özgün sentez",
-                30, new Vector2(60, 40), new Vector2(880, 420), TMPro.TextAlignmentOptions.TopLeft);
+                24, new Vector2(170, -35), new Vector2(660, 330), TMPro.TextAlignmentOptions.TopLeft);
             credText.color = new Color(0.8f, 0.75f, 0.68f);
+            credText.enableAutoSizing = true;               // kutuya sığmayı garanti et
+            credText.fontSizeMin = 16; credText.fontSizeMax = 26;
             var (closeB, _) = PrototypeSceneBuilder.UIButton(panel, "Close", "Close",
                 Vector2.zero, new Vector2(280, 64), btnBg, "ui.close");
             var closeRt = closeB.GetComponent<RectTransform>();
