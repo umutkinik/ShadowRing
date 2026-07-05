@@ -8,6 +8,7 @@
 | 9 × sentez SFX (sfx_*.wav) | kendi üretimimiz (Python sentez) | tam mülkiyet | gerekmiyor |
 | music_battle.mp3 (Heroic Age) | incompetech.com — Kevin MacLeod | **CC-BY 4.0** | **ZORUNLU: oyun içi Krediler ekranına "Heroic Age - Kevin MacLeod (incompetech.com), CC BY 4.0" yazılacak** |
 | Cinzel.ttf (başlık fontu) | Google Fonts | OFL 1.1 | gerekmiyor |
+| NotoSans.ttf (HUD fontu, Latin+Yunan+Kiril) | notofonts.github.io — Noto Project | OFL 1.1 | gerekmiyor |
 | Mixamo animasyonları (gelecek) | mixamo.com | Adobe Genel Şartlar | gerekmiyor |
 
 > Yeni her asset indirildiğinde bu tabloya satır eklenir. CC-BY olanlarda oyun içi Krediler zorunlu.

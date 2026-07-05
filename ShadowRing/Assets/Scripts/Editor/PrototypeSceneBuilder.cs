@@ -609,6 +609,24 @@ namespace Golgehalka.EditorTools
             hud.heroes = heroes;
             hud.levels = levels;
 
+            // Noto Sans (OFL, Latin+Yunan+Kiril) → HUD fontu; OS fontuna bağımlılık yok
+            var notoTtf = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/NotoSans.ttf");
+            if (notoTtf != null)
+            {
+                var noto = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(
+                    "Assets/Fonts/NotoSans SDF.asset");
+                if (noto == null)
+                {
+                    noto = TMPro.TMP_FontAsset.CreateFontAsset(notoTtf);
+                    noto.name = "NotoSans SDF";
+                    AssetDatabase.CreateAsset(noto, "Assets/Fonts/NotoSans SDF.asset");
+                    if (noto.material != null) AssetDatabase.AddObjectToAsset(noto.material, noto);
+                    if (noto.atlasTexture != null) AssetDatabase.AddObjectToAsset(noto.atlasTexture, noto);
+                    AssetDatabase.SaveAssets();
+                }
+                hud.hudFont = noto;
+            }
+
             var t = canvasGO.transform;
             Color barBg = new Color(0.05f, 0.05f, 0.09f, 0.55f);
             Color btnBg = new Color(0.16f, 0.15f, 0.22f, 0.95f);

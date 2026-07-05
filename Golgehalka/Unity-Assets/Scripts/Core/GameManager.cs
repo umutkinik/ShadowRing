@@ -17,7 +17,7 @@ namespace Golgehalka.Core
         {
             get
             {
-                if (instance == null) instance = FindFirstObjectByType<GameManager>();
+                if (instance == null) instance = FindAnyObjectByType<GameManager>();
                 return instance;
             }
         }

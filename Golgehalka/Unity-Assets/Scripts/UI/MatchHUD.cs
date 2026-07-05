@@ -54,6 +54,9 @@ namespace Golgehalka.UI
         public TMP_Text sellLabel;
         public Button towerCloseButton;
 
+        [Header("Yazı tipi")]
+        public TMP_FontAsset hudFont; // NotoSans SDF — Latin+Kiril, builder atar
+
         private Combat.Tower selectedTower;
 
         private static readonly string[] Locales = { "en", "de", "ru", "zh-Hans", "hi", "ar", "tr" };
@@ -158,29 +161,14 @@ namespace Golgehalka.UI
             sellLabel.text = L("shop.sell") + " (+" + selectedTower.SellRefund + ")";
         }
 
-        /// LiberationSans'ın kapsamadığı yazı sistemleri (Kiril vb.) için işletim
-        /// sistemi fontundan dinamik TMP fontu üret. Bulunamazsa varsayılan kalır.
-        /// (ZH/HI/AR tam desteği Faz 2'de Noto Sans asset'leriyle gelecek.)
+        /// Projeye gömülü Noto Sans (OFL, Latin+Yunan+Kiril) tüm HUD metinlerine
+        /// uygulanır — OS fontuna bağımlılık yok, her platformda aynı görünüm.
+        /// (ZH/HI/AR tam desteği Faz 2'de Noto CJK/Devanagari/Arabic ile gelecek.)
         private void ApplyRuntimeFont()
         {
-            // Yalnızca sistemde GERÇEKTEN kurulu fontları dene — uyarı spam'i olmasın
-            var installed = new System.Collections.Generic.HashSet<string>(
-                Font.GetOSInstalledFontNames());
-            foreach (string name in new[] { "Arial", "Helvetica Neue", "Helvetica", "Roboto" })
-            {
-                if (!installed.Contains(name)) continue;
-                try
-                {
-                    Font os = Font.CreateDynamicFontFromOSFont(name, 48);
-                    if (os == null) continue;
-                    var tmpFont = TMP_FontAsset.CreateFontAsset(os);
-                    if (tmpFont == null) continue;
-                    foreach (var t in GetComponentsInChildren<TMP_Text>(true))
-                        t.font = tmpFont;
-                    return;
-                }
-                catch { /* sıradaki adayı dene */ }
-            }
+            if (hudFont == null) return; // builder atamadıysa varsayılan kalır
+            foreach (var t in GetComponentsInChildren<TMP_Text>(true))
+                t.font = hudFont;
         }
 
         /// Dil butonu — 7 dili sırayla gezer.

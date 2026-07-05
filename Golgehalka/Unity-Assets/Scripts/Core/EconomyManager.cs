@@ -13,7 +13,7 @@ namespace Golgehalka.Core
         {
             get
             {
-                if (instance == null) instance = FindFirstObjectByType<EconomyManager>();
+                if (instance == null) instance = FindAnyObjectByType<EconomyManager>();
                 return instance;
             }
         }

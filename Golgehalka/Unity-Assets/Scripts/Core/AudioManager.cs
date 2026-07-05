@@ -12,7 +12,7 @@ namespace Golgehalka.Core
         {
             get
             {
-                if (instance == null) instance = FindFirstObjectByType<AudioManager>();
+                if (instance == null) instance = FindAnyObjectByType<AudioManager>();
                 return instance;
             }
         }
