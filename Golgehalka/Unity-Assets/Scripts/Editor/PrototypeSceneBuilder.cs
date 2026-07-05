@@ -299,19 +299,22 @@ namespace Golgehalka.EditorTools
             // Post-processing: vinyet + hafif renk düzeltme (Diablo havası)
             cam.GetUniversalAdditionalCameraData().renderPostProcessing = true;
             EnsureFolder("Assets", "Settings");
-            var profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            AssetDatabase.DeleteAsset("Assets/Settings/GamePostFX.asset");
-            AssetDatabase.CreateAsset(profile, "Assets/Settings/GamePostFX.asset");
-            var vig = profile.Add<Vignette>(true);
-            AssetDatabase.AddObjectToAsset(vig, profile);
-            vig.intensity.Override(0.34f);
-            vig.smoothness.Override(0.5f);
-            var colorAdj = profile.Add<ColorAdjustments>(true);
-            AssetDatabase.AddObjectToAsset(colorAdj, profile);
-            colorAdj.postExposure.Override(0.12f);
-            colorAdj.saturation.Override(7f);
-            EditorUtility.SetDirty(profile);
-            AssetDatabase.SaveAssets();
+            var profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Settings/GamePostFX.asset");
+            if (profile == null)
+            {
+                profile = ScriptableObject.CreateInstance<VolumeProfile>();
+                AssetDatabase.CreateAsset(profile, "Assets/Settings/GamePostFX.asset");
+                var vig = profile.Add<Vignette>(true);
+                AssetDatabase.AddObjectToAsset(vig, profile);
+                vig.intensity.Override(0.34f);
+                vig.smoothness.Override(0.5f);
+                var colorAdj = profile.Add<ColorAdjustments>(true);
+                AssetDatabase.AddObjectToAsset(colorAdj, profile);
+                colorAdj.postExposure.Override(0.12f);
+                colorAdj.saturation.Override(7f);
+                EditorUtility.SetDirty(profile);
+                AssetDatabase.SaveAssets();
+            }
             var volGO = new GameObject("PostFX");
             var vol = volGO.AddComponent<Volume>();
             vol.isGlobal = true;
@@ -387,7 +390,6 @@ namespace Golgehalka.EditorTools
                 var inst = Object.Instantiate(dragonModel, dragonRoot.transform);
                 inst.transform.localScale = Vector3.one * 2.6f; // heybetli boyut
                 string dragonPath = PrefabDir + "/Dragon.prefab";
-                AssetDatabase.DeleteAsset(dragonPath);
                 var dragonPrefab = PrefabUtility.SaveAsPrefabAsset(dragonRoot, dragonPath);
                 Object.DestroyImmediate(dragonRoot);
                 events.dragonPrefab = dragonPrefab;
@@ -887,7 +889,15 @@ namespace Golgehalka.EditorTools
 
         private static T CreateAsset<T>(string assetPath, System.Action<T> init) where T : ScriptableObject
         {
-            AssetDatabase.DeleteAsset(assetPath);
+            // YERİNDE güncelle: sil+yarat "isim 2/5..." kopya çöpleri üretiyordu;
+            // güncelleme GUID'i sabit tutar, sahne referansları asla kopmaz.
+            var existing = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            if (existing != null)
+            {
+                init(existing);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
             var so = ScriptableObject.CreateInstance<T>();
             init(so);
             AssetDatabase.CreateAsset(so, assetPath);
@@ -904,8 +914,7 @@ namespace Golgehalka.EditorTools
             Tint(go, color);
             setup(go);
             string prefabPath = PrefabDir + "/" + name + ".prefab";
-            AssetDatabase.DeleteAsset(prefabPath);
-            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath); // var olanın üzerine yazar
             Object.DestroyImmediate(go);
             return prefab;
         }

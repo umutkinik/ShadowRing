@@ -75,10 +75,13 @@ namespace Golgehalka.EditorTools
             var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
             floor.name = "Floor";
             floor.transform.localScale = new Vector3(2f, 1, 2f);
-            var fm = new Material(Shader.Find("Universal Render Pipeline/Lit"))
-            { color = new Color(0.05f, 0.045f, 0.065f) };
-            AssetDatabase.DeleteAsset("Assets/Prefabs/Mat_MenuFloor.mat");
-            AssetDatabase.CreateAsset(fm, "Assets/Prefabs/Mat_MenuFloor.mat");
+            var fm = AssetDatabase.LoadAssetAtPath<Material>("Assets/Prefabs/Mat_MenuFloor.mat");
+            if (fm == null)
+            {
+                fm = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                { color = new Color(0.05f, 0.045f, 0.065f) };
+                AssetDatabase.CreateAsset(fm, "Assets/Prefabs/Mat_MenuFloor.mat");
+            }
             floor.GetComponent<Renderer>().sharedMaterial = fm;
 
             // Zarok — sahnenin efendisi: dev, merkez-geri, tehditkâr

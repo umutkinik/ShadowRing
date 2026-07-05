@@ -116,6 +116,6 @@ MonoBehaviour:
   - {fileID: -8098169881513260187, guid: a59f04d41e7644280996fd9324376bab, type: 3}
   decorCount: 9
   groundColor: {r: 0.21, g: 0.27, b: 0.22, a: 1}
-  mapArt: {fileID: 0}
+  mapArt: {fileID: 2800000, guid: b7f8927e88ac34133933980731eca52c, type: 3}
   mapFlipX: 0
   mapFlipZ: 0
