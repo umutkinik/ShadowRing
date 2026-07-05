@@ -278,12 +278,13 @@ namespace Golgehalka.EditorTools
                 Vector2.zero, new Vector2(1000, 560), new Color(0.03f, 0.025f, 0.05f, 0.94f));
             var credText = PrototypeSceneBuilder.UIText(panel, "Text",
                 "SHADOWRING — The Sundered Realm\n\n" +
+                "Oyun Tasarımı & Geliştirme: UMUT KINIK\n\n" +
                 "Müzik: \"Heroic Age\" — Kevin MacLeod (incompetech.com)\n" +
                 "Creative Commons BY 4.0\n\n" +
                 "Dokular: Poly Haven (CC0)\n" +
                 "3D Modeller: Meshy AI ile üretildi\n" +
                 "Ses Efektleri: özgün sentez",
-                30, new Vector2(60, 40), new Vector2(880, 400), TMPro.TextAlignmentOptions.TopLeft);
+                30, new Vector2(60, 40), new Vector2(880, 420), TMPro.TextAlignmentOptions.TopLeft);
             credText.color = new Color(0.8f, 0.75f, 0.68f);
             var (closeB, _) = PrototypeSceneBuilder.UIButton(panel, "Close", "Close",
                 Vector2.zero, new Vector2(280, 64), btnBg, "ui.close");

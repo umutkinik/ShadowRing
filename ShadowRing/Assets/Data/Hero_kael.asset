@@ -38,4 +38,4 @@ MonoBehaviour:
   projectileSpeed: 16
   projectileStyle: 0
   projectileColor: {r: 1, g: 0.85, b: 0.4, a: 1}
-  towerPrefab: {fileID: 5942197283403140019, guid: b1f9d74f9eb024138acab23be19b0061, type: 3}
+  towerPrefab: {fileID: 1382754182552829841, guid: b1f9d74f9eb024138acab23be19b0061, type: 3}
