@@ -35,9 +35,12 @@ namespace Golgehalka.Combat
         private void OnEnable() => Active.Add(this);
         private void OnDisable() => Active.Remove(this);
 
+        private float modelBaseY; // otomatik zemin hizalamasından gelen taban yükseklik
+
         private void Awake()
         {
             model = transform.Find("Model");
+            if (model != null) modelBaseY = model.localPosition.y;
             bobPhase = UnityEngine.Random.Range(0f, 6.28f); // sürüde senkron kırıcı rastgele faz
         }
 
@@ -95,7 +98,7 @@ namespace Golgehalka.Combat
                     heavy ? Mathf.Sin(t * 0.5f) * 3f : 0f, 0f,
                     Mathf.Sin(t) * (heavy ? 4.5f : 6f));
                 var lp = model.localPosition;
-                lp.y = -0.13f + Mathf.Abs(Mathf.Sin(t)) * (heavy ? 0.13f : 0.07f);
+                lp.y = modelBaseY + Mathf.Abs(Mathf.Sin(t)) * (heavy ? 0.13f : 0.07f);
                 model.localPosition = lp;
 
                 if (heavy)
