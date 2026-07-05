@@ -34,6 +34,6 @@ MonoBehaviour:
     range: 7
     fireRate: 1.8
     tierModel: {fileID: 0}
-  projectilePrefab: {fileID: 8001197995823550395, guid: 4b70c829626a54792a992d876cfe6ec1, type: 3}
+  projectilePrefab: {fileID: 3161394633225086306, guid: 4b70c829626a54792a992d876cfe6ec1, type: 3}
   projectileSpeed: 22
-  towerPrefab: {fileID: 1825401285525581161, guid: 7fe152ca552354350b84de53baef3bef, type: 3}
+  towerPrefab: {fileID: 405821298635437973, guid: 7fe152ca552354350b84de53baef3bef, type: 3}

@@ -38,20 +38,6 @@ namespace Golgehalka.Combat
         {
             model = transform.Find("Model");
             bobPhase = UnityEngine.Random.Range(0f, 6.28f); // sürüde senkron kırıcı rastgele faz
-
-            // Rigli model varsa iskelet animasyonunu döngüde oynat
-            walkAnim = GetComponentInChildren<Animation>();
-            if (walkAnim != null && walkAnim.GetClipCount() > 0)
-            {
-                foreach (AnimationState st in walkAnim)
-                {
-                    st.wrapMode = WrapMode.Loop;
-                    st.speed = UnityEngine.Random.Range(0.9f, 1.15f); // sürü senkron kırıcı
-                    walkAnim.Play(st.name);
-                    break;
-                }
-            }
-            else walkAnim = null;
         }
 
         public void Init(EnemyDefinition def, WaypointPath followPath)
@@ -61,6 +47,22 @@ namespace Golgehalka.Combat
             path = followPath;
             waypointIndex = 0;
             transform.position = path.GetPoint(0) + FlyOffset();
+
+            // Rigli model: yürüyüşü hıza oranla oynat — yavaş dev = ağır adımlar
+            walkAnim = GetComponentInChildren<Animation>();
+            if (walkAnim != null && walkAnim.GetClipCount() > 0)
+            {
+                float pace = Mathf.Clamp(def.moveSpeed / 2.2f, 0.5f, 1.3f)
+                             * UnityEngine.Random.Range(0.95f, 1.1f);
+                foreach (AnimationState st in walkAnim)
+                {
+                    st.wrapMode = WrapMode.Loop;
+                    st.speed = pace;
+                    walkAnim.Play(st.name);
+                    break;
+                }
+            }
+            else walkAnim = null;
         }
 
         /// Uçan birimler yolun 1.5 birim üzerinde süzülür.
