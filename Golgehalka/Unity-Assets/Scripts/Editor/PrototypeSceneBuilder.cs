@@ -51,16 +51,16 @@ namespace Golgehalka.EditorTools
                 d => { d.maxHealth = 60; d.moveSpeed = 4f; d.goldReward = 6; });
             var bloodclaw = MakeEnemy("Bloodclaw", "bloodclaw", new Color(0.7f, 0.15f, 0.15f), 1.15f,
                 d => { d.maxHealth = 180; d.armor = 0.35f; d.moveSpeed = 1.6f; d.goldReward = 12; });
-            var behemoth = MakeEnemy("StoneBehemoth", "stone_behemoth", new Color(0.45f, 0.45f, 0.5f), 2.2f,
+            var behemoth = MakeEnemy("StoneBehemoth", "stone_behemoth", new Color(0.45f, 0.45f, 0.5f), 1.35f,
                 d => { d.maxHealth = 1400; d.armor = 0.3f; d.moveSpeed = 0.9f; d.goldReward = 80; d.livesCost = 5; d.isBoss = true; });
-            var shroudKing = MakeEnemy("ShroudKing", "shroud_king", new Color(0.2f, 0.1f, 0.3f), 1.6f,
+            var shroudKing = MakeEnemy("ShroudKing", "shroud_king", new Color(0.2f, 0.1f, 0.3f), 1.35f,
                 d => { d.maxHealth = 900; d.armor = 0.2f; d.moveSpeed = 1.4f; d.goldReward = 100; d.livesCost = 5; d.isBoss = true; });
             // Act II-III kadrosu
             var skyTerror = MakeEnemy("SkyTerror", "sky_terror", new Color(0.35f, 0.35f, 0.45f), 1.2f,
                 d => { d.maxHealth = 90; d.moveSpeed = 2.8f; d.goldReward = 10; d.isFlying = true; }); // sadece Faelyn vurabilir!
-            var molgroth = MakeEnemy("Molgroth", "molgroth", new Color(0.8f, 0.3f, 0.1f), 2.4f,
+            var molgroth = MakeEnemy("Molgroth", "molgroth", new Color(0.8f, 0.3f, 0.1f), 1.6f,
                 d => { d.maxHealth = 2600; d.armor = 0.25f; d.moveSpeed = 1.2f; d.goldReward = 150; d.livesCost = 10; d.isBoss = true; });
-            var malketh = MakeEnemy("Malketh", "malketh", new Color(0.8f, 0.8f, 0.85f), 1.9f,
+            var malketh = MakeEnemy("Malketh", "malketh", new Color(0.8f, 0.8f, 0.85f), 1.5f,
                 d => { d.maxHealth = 3200; d.armor = 0.15f; d.moveSpeed = 1.0f; d.goldReward = 200; d.livesCost = 20; d.isBoss = true; });
             var morwen = MakeEnemy("Morwen", "morwen", new Color(0.15f, 0.3f, 0.15f), 2.5f,
                 d => { d.maxHealth = 4000; d.armor = 0.3f; d.moveSpeed = 1.1f; d.goldReward = 250; d.livesCost = 20; d.isBoss = true; });

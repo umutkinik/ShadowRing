@@ -29,6 +29,7 @@ namespace Golgehalka.Combat
         private int waypointIndex;
         private Transform model;        // prosedürel yürüyüş sallanması için
         private float bobPhase;
+        private float stepTimer;        // ağır tepinme: adım toz bulutu zamanlayıcısı
         private Animation walkAnim;     // Meshy rig'inden gelen gerçek yürüyüş (varsa)
 
         private void OnEnable() => Active.Add(this);
@@ -82,14 +83,31 @@ namespace Golgehalka.Combat
                 transform.position, target, Def.moveSpeed * SpeedFactor * Time.deltaTime);
             transform.LookAt(target);
 
-            // Prosedürel yürüyüş — YALNIZCA iskelet animasyonu olmayanlarda
+            // Prosedürel yürüyüş — YALNIZCA iskelet animasyonu olmayanlarda.
+            // Ağır boss'lar (yavaş devler) tepinerek yürür: derin salınım + adım tozu.
             if (walkAnim == null && model != null)
             {
-                float t = Time.time * (4f + Def.moveSpeed * 2.5f) + bobPhase;
-                model.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(t) * 6f);
+                bool heavy = Def.isBoss && Def.moveSpeed < 1.3f;
+                float rate = heavy ? 2.4f : 4f + Def.moveSpeed * 2.5f;
+                float t = Time.time * rate + bobPhase;
+
+                model.localRotation = Quaternion.Euler(
+                    heavy ? Mathf.Sin(t * 0.5f) * 3f : 0f, 0f,
+                    Mathf.Sin(t) * (heavy ? 4.5f : 6f));
                 var lp = model.localPosition;
-                lp.y = -0.13f + Mathf.Abs(Mathf.Sin(t)) * 0.07f;
+                lp.y = -0.13f + Mathf.Abs(Mathf.Sin(t)) * (heavy ? 0.13f : 0.07f);
                 model.localPosition = lp;
+
+                if (heavy)
+                {
+                    stepTimer -= Time.deltaTime;
+                    if (stepTimer <= 0f)
+                    {
+                        stepTimer = Mathf.PI / rate; // her yarım salınım = bir adım
+                        Vector3 foot = transform.position; foot.y = 0.1f;
+                        VFX.Burst(foot, new Color(0.55f, 0.5f, 0.4f, 0.8f), 9, 1.3f, 0.35f, 0.6f, -0.05f);
+                    }
+                }
             }
 
             if ((transform.position - target).sqrMagnitude < 0.01f)
