@@ -777,6 +777,16 @@ namespace Golgehalka.EditorTools
             inst.transform.localPosition = localPos;
             inst.transform.localRotation = Quaternion.identity;
             inst.transform.localScale = localScale;
+
+            // Otomatik zemine oturtma: origin nerede olursa olsun ayaklar yere basar
+            // (sınır kutusunun tabanı, spawn noktasında world y≈0'a denk gelir)
+            var rends = inst.GetComponentsInChildren<Renderer>();
+            if (rends.Length > 0)
+            {
+                var b = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
+                inst.transform.position += Vector3.up * (-0.09f - b.min.y);
+            }
             return true;
         }
 
