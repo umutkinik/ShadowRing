@@ -121,7 +121,15 @@ namespace Golgehalka.Core
             // 4) Zemin: boyanmış harita varsa tek resim, yoksa doku+dekor+orman
             if (painted)
             {
-                if (groundRenderer != null) groundRenderer.enabled = false;
+                // Tablo sabit 28×20 (hiza bozulmasın); geniş ekran kenarlarını
+                // tablonun kenar tonuyla kaynaşan koyu zemin doldurur
+                if (groundRenderer != null)
+                {
+                    groundRenderer.enabled = true;
+                    var gm = groundRenderer.material;
+                    gm.mainTexture = null;
+                    gm.color = new Color(0.055f, 0.05f, 0.065f);
+                }
                 var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 quad.name = "PaintedMap";
                 Destroy(quad.GetComponent<Collider>());
