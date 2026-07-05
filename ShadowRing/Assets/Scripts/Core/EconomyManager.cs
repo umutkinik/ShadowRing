@@ -7,7 +7,16 @@ namespace Golgehalka.Core
     /// onlar kalıcı profil sisteminde tutulur.
     public class EconomyManager : MonoBehaviour
     {
-        public static EconomyManager Instance { get; private set; }
+        private static EconomyManager instance;
+
+        public static EconomyManager Instance
+        {
+            get
+            {
+                if (instance == null) instance = FindFirstObjectByType<EconomyManager>();
+                return instance;
+            }
+        }
 
         [SerializeField] private int startingGold = 200;
 
@@ -17,7 +26,7 @@ namespace Golgehalka.Core
         private void Awake()
         {
             // Sahne-yerel singleton: "son gelen kazanır" (bkz. GameManager notu).
-            Instance = this;
+            instance = this;
             Gold = startingGold;
         }
 

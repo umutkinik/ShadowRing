@@ -202,9 +202,11 @@ namespace Golgehalka.UI
 
         private void Update()
         {
+            var gm = GameManager.Instance;
+            if (gm == null) return;
             nextWaveButton.interactable =
-                GameManager.Instance.State == GameState.Preparing ||
-                GameManager.Instance.State == GameState.BetweenWaves;
+                gm.State == GameState.Preparing ||
+                gm.State == GameState.BetweenWaves;
 
             // Seçili kule yok olduysa (harita değişimi vb.) paneli kapat
             if (towerPanel.activeSelf && selectedTower == null) HideTowerPanel();

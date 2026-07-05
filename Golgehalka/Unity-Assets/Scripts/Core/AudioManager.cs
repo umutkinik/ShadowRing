@@ -6,7 +6,16 @@ namespace Golgehalka.Core
     /// Ses seviyeleri PlayerProfile'dan gelir (ayarlar ekranı bağlanınca canlı değişir).
     public class AudioManager : MonoBehaviour
     {
-        public static AudioManager Instance { get; private set; }
+        private static AudioManager instance;
+
+        public static AudioManager Instance
+        {
+            get
+            {
+                if (instance == null) instance = FindFirstObjectByType<AudioManager>();
+                return instance;
+            }
+        }
 
         [Header("SFX")]
         public AudioClip arrow;
@@ -33,7 +42,7 @@ namespace Golgehalka.Core
 
         private void Awake()
         {
-            Instance = this;
+            instance = this;
             sfxSource = gameObject.AddComponent<AudioSource>();
             musicSource = gameObject.AddComponent<AudioSource>();
             musicSource.loop = true;

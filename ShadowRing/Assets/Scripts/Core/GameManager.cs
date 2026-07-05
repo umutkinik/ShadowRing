@@ -9,7 +9,18 @@ namespace Golgehalka.Core
     /// Sahnede tek instance — diğer sistemler event'lere abone olur.
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance { get; private set; }
+        private static GameManager instance;
+
+        /// Tembel erişim: Awake zamanlaması ne olursa olsun sahneden bulunur
+        /// (Unity 6 hızlı Play modu yarışlarına bağışıklık).
+        public static GameManager Instance
+        {
+            get
+            {
+                if (instance == null) instance = FindFirstObjectByType<GameManager>();
+                return instance;
+            }
+        }
 
         [SerializeField] private int startingLives = 20;
 
@@ -23,7 +34,7 @@ namespace Golgehalka.Core
         {
             // Sahne-yerel singleton: "son gelen kazanır" — Unity 6 hızlı Play modunda
             // statikler sıfırlanmayabildiği için Destroy tabanlı kalıp kullanılmaz.
-            Instance = this;
+            instance = this;
             Lives = startingLives;
             State = GameState.Preparing;
             Time.timeScale = 1f;

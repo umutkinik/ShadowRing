@@ -27,7 +27,8 @@ namespace Golgehalka.Core
         private void Update()
         {
             if (busy) return;
-            if (GameManager.Instance.State != GameState.WaveActive) return;
+            var gm = GameManager.Instance;
+            if (gm == null || gm.State != GameState.WaveActive) return;
 
             timer -= Time.deltaTime;
             if (timer > 0f) return;
