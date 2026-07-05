@@ -5,6 +5,9 @@ namespace Golgehalka.Data
     public enum DamageType { Physical, Piercing, Magic, Poison, Fire }
     public enum TargetPriority { First, Last, Strongest, Nearest }
 
+    /// Kahramana özgü mermi görünümü — okçu ok atar, büyücü büyü, cüce balta!
+    public enum ProjectileStyle { Orb, Arrow, SpinningAxe, MagicBolt, PoisonOrb }
+
     /// Bir kule kademesinin istatistikleri (maç içi 3 kademe yükseltme).
     [System.Serializable]
     public class TowerTier
@@ -34,6 +37,8 @@ namespace Golgehalka.Data
         [Header("Mermi")]
         public GameObject projectilePrefab;
         public float projectileSpeed = 12f;
+        public ProjectileStyle projectileStyle = ProjectileStyle.Orb;
+        public Color projectileColor = new Color(1f, 0.85f, 0.3f);
 
         [Header("Görsel")]
         public GameObject towerPrefab;      // kahramana özel kule prefab'ı (modeliyle)

@@ -70,16 +70,19 @@ namespace Golgehalka.EditorTools
             // ---- 3) KAHRAMANLAR (kule prefab'ı + tanım) ----
             var borin = MakeHero("borin", new Color(0.4f, 0.55f, 0.8f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.SpinningAxe; h.projectileColor = new Color(0.72f, 0.72f, 0.78f);
                 h.damageType = DamageType.Physical; h.armorPenetration = 0.4f; h.projectileSpeed = 14f;
                 h.tiers = Tiers(110, 25, 4.5f, 0.7f, 130, 42, 5f, 0.8f, 210, 70, 5.5f, 0.9f);
             });
             var faelyn = MakeHero("faelyn", new Color(0.35f, 0.65f, 0.35f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.Arrow; h.projectileColor = new Color(0.82f, 0.68f, 0.42f);
                 h.damageType = DamageType.Physical; h.canTargetFlying = true; h.projectileSpeed = 22f;
                 h.tiers = Tiers(100, 12, 6f, 1.5f, 120, 20, 6.5f, 1.6f, 200, 34, 7f, 1.8f);
             });
             var elwin = MakeHero("elwin", new Color(0.55f, 0.5f, 0.75f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.MagicBolt; h.projectileColor = new Color(0.45f, 0.8f, 1f);
                 h.damageType = DamageType.Magic; h.projectileSpeed = 16f; // büyü zırh deler
                 h.tiers = Tiers(150, 15, 5f, 0.8f, 180, 25, 5.2f, 0.85f, 280, 42, 5.5f, 0.9f);
             });
@@ -87,31 +90,37 @@ namespace Golgehalka.EditorTools
             // (aura/taunt/krit/zehir yığını gibi özel mekanikler Faz 2'de eklenecek)
             var kael = MakeHero("kael", new Color(0.3f, 0.45f, 0.3f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.Orb; h.projectileColor = new Color(1f, 0.85f, 0.4f);
                 h.damageType = DamageType.Physical; h.armorPenetration = 0.1f; h.projectileSpeed = 16f;
                 h.tiers = Tiers(120, 18, 3.5f, 1f, 140, 30, 4f, 1.05f, 220, 50, 4.5f, 1.1f);
             });
             var baldric = MakeHero("baldric", new Color(0.7f, 0.55f, 0.2f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.Orb; h.projectileColor = new Color(0.85f, 0.6f, 0.3f);
                 h.damageType = DamageType.Physical; h.projectileSpeed = 14f;
                 h.tiers = Tiers(90, 10, 2.5f, 0.9f, 110, 16, 2.8f, 0.95f, 180, 28, 3.2f, 1f);
             });
             var milo = MakeHero("milo", new Color(0.45f, 0.6f, 0.7f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.Arrow; h.projectileColor = new Color(0.8f, 0.85f, 0.92f);
                 h.damageType = DamageType.Physical; h.projectileSpeed = 18f;
                 h.tiers = Tiers(100, 14, 3f, 1.2f, 120, 24, 3.4f, 1.3f, 200, 40, 3.8f, 1.4f);
             });
             var pip = MakeHero("pip", new Color(0.75f, 0.6f, 0.35f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.Orb; h.projectileColor = new Color(0.7f, 0.88f, 0.5f);
                 h.damageType = DamageType.Physical; h.projectileSpeed = 14f;
                 h.tiers = Tiers(80, 6, 3f, 1f, 100, 10, 3.3f, 1.05f, 160, 16, 3.6f, 1.1f);
             });
             var sylwen = MakeHero("sylwen", new Color(0.85f, 0.85f, 0.95f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.MagicBolt; h.projectileColor = new Color(0.95f, 0.95f, 1f);
                 h.damageType = DamageType.Magic; h.projectileSpeed = 16f;
                 h.tiers = Tiers(140, 8, 5.5f, 0.8f, 170, 14, 5.8f, 0.85f, 260, 22, 6.2f, 0.9f);
             });
             var ravox = MakeHero("ravox", new Color(0.3f, 0.3f, 0.35f), projectilePrefab, h =>
             {
+                h.projectileStyle = ProjectileStyle.PoisonOrb; h.projectileColor = new Color(0.42f, 0.9f, 0.32f);
                 h.damageType = DamageType.Poison; h.projectileSpeed = 18f; // zehir zırh deler
                 h.tiers = Tiers(130, 16, 4f, 1.1f, 150, 26, 4.4f, 1.15f, 240, 44, 4.8f, 1.2f);
             });
@@ -366,6 +375,7 @@ namespace Golgehalka.EditorTools
             audio.die = LoadClip("sfx_die");
             audio.roar = LoadClip("sfx_roar");
             audio.wing = LoadClip("sfx_wing");
+            audio.magic = LoadClip("sfx_magic");
             audio.battleMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/music_battle.mp3");
 
             // Ortam olayları: ejderha, yıldırım, ateş yağmuru, deprem

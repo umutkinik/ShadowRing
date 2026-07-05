@@ -23,6 +23,7 @@ namespace Golgehalka.Core
         public AudioClip die;
         public AudioClip roar;
         public AudioClip wing;
+        public AudioClip magic;
 
         [Header("Müzik")]
         public AudioClip battleMusic;
@@ -74,5 +75,6 @@ namespace Golgehalka.Core
         public static void Die() { if (Instance != null) Instance.PlayClip(Instance.die, 0.65f); }
         public static void Roar() { if (Instance != null) Instance.PlayClip(Instance.roar); }
         public static void Wing() { if (Instance != null) Instance.PlayClip(Instance.wing, 0.5f); }
+        public static void Magic() { if (Instance != null) Instance.PlayClip(Instance.magic, 0.5f); }
     }
 }

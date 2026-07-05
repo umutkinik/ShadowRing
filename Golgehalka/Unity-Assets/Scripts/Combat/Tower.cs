@@ -163,8 +163,14 @@ namespace Golgehalka.Combat
                 firePoint != null ? firePoint.position : transform.position,
                 Quaternion.identity);
             go.GetComponent<Projectile>().Init(
-                target, Tier.damage, Hero.damageType, Hero.armorPenetration, Hero.projectileSpeed);
-            Core.AudioManager.Arrow();
+                target, Tier.damage, Hero.damageType, Hero.armorPenetration, Hero.projectileSpeed,
+                Hero.projectileStyle, Hero.projectileColor);
+            // Büyücüler büyü sesi, diğerleri ok vınlaması
+            if (Hero.projectileStyle == ProjectileStyle.MagicBolt ||
+                Hero.projectileStyle == ProjectileStyle.PoisonOrb)
+                Core.AudioManager.Magic();
+            else
+                Core.AudioManager.Arrow();
         }
 
         private System.Collections.IEnumerator AttackPunch()
